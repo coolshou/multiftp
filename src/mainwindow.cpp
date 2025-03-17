@@ -3,6 +3,8 @@
 
 #include "ftpclient.h"
 
+#include <QDir>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -35,14 +37,28 @@ void MainWindow::onAdd(bool checked)
     }else{
         mode = FtpClient::FtpMode::Upload;
     }
-    m_ftpmanager->addFtpClient(ui->ftpServer->text(), ui->ftpPort->value(),
-                               ui->ftpUsername->text(),ui->ftpPassword->text(),
-                               ui->ftpLocalfile->text(), ui->ftpRemotefile->text(),
-                               mode);
+    // QDir::absoluteFilePath();
+    int id = m_ftpmanager->count();
+    QString username = ui->ftpUsername->text();
+    QString password = ui->ftpPassword->text();
+    QString server = ui->ftpServer->text();
+    int serverport = ui->ftpPort->value();
+    QString localfile = ui->ftpLocalfile->text();
+    if (!QDir::isAbsolutePath(localfile)){
+        localfile = qApp->applicationDirPath()+QDir::separator()+localfile;
+    }
+    QString remotefile = ui->ftpRemotefile->text();
+
+    m_ftpmanager->addFtpClient(id, server , serverport,
+                               username, password,
+                               localfile, remotefile, mode);
+    remotefile = QString("ftp://%1:%2@%3:%4/%5").arg(username, password, server,
+                                                     QString::number(serverport),
+                                                     remotefile);
     QVector<QVariant> data;
-    data << QVariant(ui->ftpLocalfile->text());
+    data << QVariant(localfile);
     data << QVariant(mode);
-    data << QVariant(ui->ftpRemotefile->text());
+    data << QVariant(remotefile);
     data << QVariant("");
     qDebug() << "data:" << data;
     m_ftpmodel->addData(data);

@@ -5,9 +5,10 @@
 
 #include <QDebug>
 
-FtpClient::FtpClient(const QString &server, const QString &username, const QString &password,
+FtpClient::FtpClient(int id, const QString &server, const QString &username,
+                     const QString &password,
                      int port,int loops, QObject *parent)
-    : QObject{parent}, m_server(server), m_username(username),
+    : QObject{parent}, m_id(id), m_server(server), m_username(username),
     m_password(password), m_port(port), m_loops(loops)
 {
     m_runtimes = 0;

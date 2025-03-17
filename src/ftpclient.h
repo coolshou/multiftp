@@ -15,7 +15,7 @@ public:
     enum FtpMode{ Upload, Download};
     Q_ENUM(FtpMode)
 
-    explicit FtpClient(const QString &server, const QString &username, const QString &password,
+    explicit FtpClient(int id, const QString &server, const QString &username, const QString &password,
                        int port=21, int loop=0, QObject *parent = nullptr);
     ~FtpClient();
     void setFtpMode(FtpMode mode, QString localfile, QString remotefile);
@@ -54,6 +54,7 @@ private:
     // size_t writeDownloadfile(char *buffer, size_t size) ;
     // QNetworkAccessManager *networkManager;
     void log(QString text);
+    int m_id;
     CurlEasy *transfer;
     QFile *m_downloadFile = nullptr;
     QFile *m_uploadFile = nullptr;

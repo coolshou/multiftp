@@ -3,10 +3,8 @@
 FtpModel::FtpModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
-    // setHeaderData(0, Qt::Horizontal, "ID");
     // Initialize column headers
     m_columnHeaders = {"Local File", "DIR", "Remote File", "comment"};
-    // initHeader();
 }
 
 QVariant FtpModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -15,13 +13,6 @@ QVariant FtpModel::headerData(int section, Qt::Orientation orientation, int role
     if (role == Qt::DisplayRole) {
         if (orientation == Qt::Horizontal) {
             return m_columnHeaders[section];
-            // switch (section) {
-            // case FtpModel::Col::Localfile : return "Local File";
-            // case FtpModel::Col::Dir: return "DIR";
-            // case FtpModel::Col::RemoteFile: return "Remote File";
-            // case FtpModel::Col::Comment: return "comment";
-            // default: return QVariant();
-            // }
         } else {
             return QString("%1").arg(section + 1);
         }
@@ -45,8 +36,9 @@ bool FtpModel::setHeaderData(int section,
 
 int FtpModel::rowCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
-        return 0;
+    Q_UNUSED(parent)
+    // if (!parent.isValid())
+    //     return 0;
 
     // FIXME: Implement me!
     return m_data.size();
@@ -54,8 +46,9 @@ int FtpModel::rowCount(const QModelIndex &parent) const
 
 int FtpModel::columnCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
-        return 0;
+    Q_UNUSED(parent)
+    // if (!parent.isValid())
+    //     return 0;
 
     // FIXME: Implement me!
     return m_columnHeaders.size();
@@ -86,15 +79,25 @@ QVariant FtpModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    switch (role)
-    {
-        //case Qt::DecorationRole: // icon
-
-        case Qt::DisplayRole:
-            return m_data[index.row()][index.column()];
-        default:
+    if((role==Qt::DisplayRole)&& !m_data.isEmpty()){
+        if (index.row()>= m_data.size()){
             return QVariant();
+        }
+        if (index.column() >= m_data[index.row()].size()){
+            return QVariant();
+        }
+        return m_data[index.row()][index.column()];
     }
+    // switch (role)
+    // {
+    //     //case Qt::DecorationRole: // icon
+    //     case Qt::DisplayRole:
+    //     if (!m_data.isEmpty()){
+    //         return m_data[index.row()][index.column()];
+    //     }
+    //     default:
+    //         return QVariant();
+    // }
 
     // FIXME: Implement me!
     return QVariant();
@@ -151,10 +154,7 @@ void FtpModel::addData(const QVector<QVariant> &newRow)
     qDebug() << "newRow size:" << newRow.size() << " newRow:" << newRow;
     qDebug() << "m_data size:" << m_data.size() << " m_data:" << m_data;
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
-    beginInsertColumns(QModelIndex(), 0, newRow.size()-1);
     m_data.append(newRow);
-    // m_data << newRow;
-    endInsertColumns();
     endInsertRows();
     qDebug() << "after insert m_data size:" << m_data.size() << " m_data:" << m_data;
 }

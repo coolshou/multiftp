@@ -15,11 +15,11 @@ FtpManager::~FtpManager() {
     }
 }
 
-void FtpManager::addFtpClient(const QString &server, int port,
+void FtpManager::addFtpClient(int id, const QString &server, int port,
                               const QString &username, const QString &password,
                               QString localfile, QString remotefile, FtpClient::FtpMode mode) {
     QThread *thread = new QThread;
-    FtpClient *client = new FtpClient(server, username, password, port);
+    FtpClient *client = new FtpClient(id, server, username, password, port);
     client->setFtpMode(mode, localfile, remotefile);
     client->moveToThread(thread);
 
@@ -47,6 +47,11 @@ void FtpManager::stop()
     foreach(auto *cl, clients){
         cl->setStop();
     }
+}
+
+int FtpManager::count()
+{
+    return clients.size();
 }
 
 

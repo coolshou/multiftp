@@ -1,0 +1,3 @@
+[submodule "qtcurl"]
+	path = qtcurl
+	url = https://github.com/coolshou/qtcurl.git

@@ -5,7 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
-include(qtcurl/qtcurl.pri)
+include(qtcurl/src/qtcurl.pri)
 # CONFIG += link_pkgconfig
 # PKGCONFIG += curl-gnutls
 LIBS += -lcurl

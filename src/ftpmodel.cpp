@@ -4,7 +4,7 @@ FtpModel::FtpModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
     // Initialize column headers
-    m_columnHeaders = {"Local File", "DIR", "Remote File", "comment"};
+    m_columnHeaders = {"Local File", "DIR", "Remote File", "status", "comment"};
 }
 
 QVariant FtpModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -125,6 +125,15 @@ bool FtpModel::setData(const QModelIndex &index, const QVariant &value, int role
     return false;
 }
 
+bool FtpModel::setData(int row, int col, const QVariant &value)
+{
+    if (row<m_data.size()){
+        if (col< m_data[row].size()){
+            m_data[row][col] = value;
+        }
+    }
+}
+
 Qt::ItemFlags FtpModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
@@ -175,10 +184,17 @@ bool FtpModel::removeColumns(int column, int count, const QModelIndex &parent)
     return true;
 }
 
-void FtpModel::initHeader()
+void FtpModel::clear()
 {
-    setHeaderData(0, Qt::Horizontal, "Local File");
-    setHeaderData(1, Qt::Horizontal, "DIR");
-    setHeaderData(2, Qt::Horizontal, "Remote File");
-    setHeaderData(3, Qt::Horizontal, "Comment");
+    qDebug() << "TODO: FtpModel::clear";
+}
+
+void FtpModel::updateProgress(int id, qint64 bytesCurrent, qint64 bytesTotal)
+{
+    setData(id, Col::Status, QVariant(QString("%s/%s").arg(QString::number(bytesCurrent), QString::number(bytesTotal))));
+}
+
+void FtpModel::updateComment(int id, QString msg)
+{
+    setData(id, Col::Comment, QVariant(msg));
 }

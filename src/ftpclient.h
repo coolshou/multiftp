@@ -28,23 +28,24 @@ public slots:
     void work();
 
 signals:
-    void downloadFinished();
-    void uploadFinished();
-    void progress(qint64 bytesCurrent, qint64 bytesTotal);
+    void downloadFinished(int id);
+    void uploadFinished(int id);
+    void progress(int id, qint64 bytesCurrent, qint64 bytesTotal);
     void stop();
+    void errormsg(int id, QString msg);
 
 private slots:
     void onTransferProgress(qint64 downloadTotal, qint64 downloadNow, qint64 uploadTotal, qint64 uploadNow);
     void onTransferDone();
     void onTransferAborted();
 
-    void onDownloadFinished();
-    void onUploadFinished();
-    void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
-    void onDownloadReadyRead();
-    void onDownloadError(QNetworkReply::NetworkError code);
-    void onUploadProgress(qint64 bytesSent, qint64 bytesTotal);
-    void onUploadError(QNetworkReply::NetworkError code);
+    // void onDownloadFinished();
+    // void onUploadFinished();
+    // void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+    // void onDownloadReadyRead();
+    // void onDownloadError(QNetworkReply::NetworkError code);
+    // void onUploadProgress(qint64 bytesSent, qint64 bytesTotal);
+    // void onUploadError(QNetworkReply::NetworkError code);
     // static size_t readUploadfile(char *buffer, size_t size, size_t nitems, void *stream);
     // static size_t writeDownloadfile(char *buffer, size_t size, size_t nmemb, void *userdata);
 

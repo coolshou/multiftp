@@ -9,12 +9,13 @@ class FtpModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    // enum Col {
-    //     Localfile,
-    //     Dir,
-    //     RemoteFile,
-    //     Comment
-    // }
+    enum Col {
+        Localfile,
+        Dir,
+        RemoteFile,
+        Status,
+        Comment
+    };
     explicit FtpModel(QObject *parent = nullptr);
 
     // Header:
@@ -42,7 +43,7 @@ public:
     QModelIndex parent(const QModelIndex &index) const override;
     // Editable:
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-
+    bool setData(int row, int col, const QVariant &value);
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     // Add data:
@@ -53,9 +54,10 @@ public:
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     bool removeColumns(int column, int count, const QModelIndex &parent = QModelIndex()) override;
 
-    //header
-    void initHeader();
-
+    void clear();
+public slots:
+    void updateProgress(int id, qint64 bytesCurrent, qint64 bytesTotal);
+    void updateComment(int id, QString msg);
 private:
     QVector<QString> m_columnHeaders;
     QVector<QVector<QVariant>> m_data;

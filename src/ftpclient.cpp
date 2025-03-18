@@ -166,7 +166,7 @@ void FtpClient::onTransferProgress(qint64 downloadTotal, qint64 downloadNow, qin
 
     if (m_ftpmode==FtpClient::FtpMode::Download){
         if (downloadTotal > 0) {
-            emit progress(downloadNow , downloadTotal);
+            emit progress(m_id, downloadNow , downloadTotal);
             if (downloadNow > downloadTotal){
                 downloadNow = downloadTotal;
             }
@@ -176,74 +176,77 @@ void FtpClient::onTransferProgress(qint64 downloadTotal, qint64 downloadNow, qin
             // ui->progressBar->setValue(0);
         }
     }else{
-        //TODO upload
-    }
-}
-
-
-
-void FtpClient::onDownloadFinished() {
-    // Handle download completion
-    if (m_file) {
-        m_file->close();
-        delete m_file;
-        m_file = nullptr;
-    }
-    //TODO: loop Download
-    // emit downloadFinished();
-    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    if (reply){
-        reply->deleteLater();
-    }
-}
-
-void FtpClient::onUploadFinished() {
-    // Handle upload completion
-    //TODO: loop Upload
-    // emit uploadFinished();
-    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    if (reply){
-        // if (reply->error() == QNetworkReply::NoError) {
-        reply->deleteLater();
-    }
-}
-
-void FtpClient::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
-{
-    qDebug() << "onDownloadProgress:" << QString::number(bytesReceived) << " / " << QString::number(bytesTotal);
-    emit progress(bytesReceived, bytesTotal);
-}
-
-void FtpClient::onDownloadReadyRead()
-{
-    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    if (reply) {
-        qDebug() << "onDownloadReadyRead: " << reply;
-        if (m_file) {
-            m_file->write(reply->readAll());
-        }else{
-            qDebug() << "m_file not exist";
+        if (uploadTotal >0){
+            emit progress(m_id, uploadNow, uploadTotal);
+            if (uploadNow > uploadTotal){
+                uploadNow = uploadTotal;
+            }
         }
-    }else{
-        qDebug() << "QNetworkReply not exist";
     }
 }
 
-void FtpClient::onDownloadError(QNetworkReply::NetworkError code)
-{
-    qDebug() << "onDownloadError:" << code ;//<< "(" << code.errorString() << ")";
-}
+// void FtpClient::onDownloadFinished() {
+//     // Handle download completion
+//     if (m_file) {
+//         m_file->close();
+//         delete m_file;
+//         m_file = nullptr;
+//     }
+//     //TODO: loop Download
+//     // emit downloadFinished();
+//     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+//     if (reply){
+//         reply->deleteLater();
+//     }
+// }
 
-void FtpClient::onUploadProgress(qint64 bytesSent, qint64 bytesTotal)
-{
-    qDebug() << "onUploadProgress:" << QString::number(bytesSent) << " / " << QString::number(bytesTotal);
-    emit progress(bytesSent, bytesTotal);
-}
+// void FtpClient::onUploadFinished() {
+//     // Handle upload completion
+//     //TODO: loop Upload
+//     // emit uploadFinished();
+//     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+//     if (reply){
+//         // if (reply->error() == QNetworkReply::NoError) {
+//         reply->deleteLater();
+//     }
+// }
 
-void FtpClient::onUploadError(QNetworkReply::NetworkError code)
-{
-    qDebug() << "onUploadError:" << code ;//<< "(" << code.errorString() << ")";
-}
+// void FtpClient::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+// {
+//     qDebug() << "onDownloadProgress:" << QString::number(bytesReceived) << " / " << QString::number(bytesTotal);
+//     emit progress(bytesReceived, bytesTotal);
+// }
+
+// void FtpClient::onDownloadReadyRead()
+// {
+//     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+//     if (reply) {
+//         qDebug() << "onDownloadReadyRead: " << reply;
+//         if (m_file) {
+//             m_file->write(reply->readAll());
+//         }else{
+//             qDebug() << "m_file not exist";
+//         }
+//     }else{
+//         qDebug() << "QNetworkReply not exist";
+//     }
+// }
+
+// void FtpClient::onDownloadError(QNetworkReply::NetworkError code)
+// {
+//     qDebug() << "onDownloadError:" << code ;//<< "(" << code.errorString() << ")";
+// }
+
+// void FtpClient::onUploadProgress(qint64 bytesSent, qint64 bytesTotal)
+// {
+//     qDebug() << "onUploadProgress:" << QString::number(bytesSent) << " / " << QString::number(bytesTotal);
+//     emit progress(bytesSent, bytesTotal);
+// }
+
+// void FtpClient::onUploadError(QNetworkReply::NetworkError code)
+// {
+//     qDebug() << "onUploadError:" << code ;//<< "(" << code.errorString() << ")";
+// }
 
 // size_t FtpClient::readUploadfile(char *buffer, size_t size, size_t nitems, void *stream)
 // const size_t FtpClient::readUploadfile(char *buffer, size_t size)
@@ -297,19 +300,34 @@ void FtpClient::onTransferDone()
         log(QString("Transfer failed with curl error '%1'")
                 .arg(curl_easy_strerror(transfer->result())));
         m_downloadFile->remove();
+        if (m_ftpmode == FtpMode::Download){
+            emit downloadFinished(m_id);
+        }else {
+            emit uploadFinished(m_id);
+        }
     } else {
-        log(QString("Transfer complete. %1 bytes downloaded.")
-                .arg(m_downloadFile->size()));
+        int tsize=0;
+        if (m_ftpmode == FtpMode::Download){
+            tsize = m_downloadFile->size();
+        }else{
+            tsize = m_uploadFile->size();
+        }
+        log(QString("Transfer complete. %1 bytes Transfered.").arg(tsize));
         // ui->progressBar->setValue(ui->progressBar->maximum());
     }
-
-    delete m_downloadFile;
-    m_downloadFile = nullptr;
+    if (m_ftpmode == FtpMode::Download){
+        delete m_downloadFile;
+        m_downloadFile = nullptr;
+    }else{
+        delete m_uploadFile;
+        m_uploadFile = nullptr;
+    }
 }
 
 void FtpClient::onTransferAborted()
 {
     log(QString("Transfer aborted. "));
+    emit errormsg(m_id, "Transfer aborted.");
 
     // log(QString("Transfer aborted. %1 bytes downloaded.")
     //         .arg(m_downloadFile->size()));

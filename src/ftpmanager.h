@@ -24,15 +24,19 @@ public:
 private slots:
     void onDownloadFinished(int id);
     void onUploadFinished(int id);
-    void onProgress(int id, qint64 bytesCurrent, qint64 bytesTotal);
+    void onProgress(int id, qint64 bytesCurrent, qint64 bytesTotal, int percentage);
     void onErrorMsg(int id, QString msg);
+    void onStop(int id);
 signals:
-    void progress(int id, qint64 bytesCurrent, qint64 bytesTotal);
+    void progress(int id, qint64 bytesCurrent, qint64 bytesTotal, int percentage);
     void errormsg(int id, QString msg);
+    void started();
+    void stoped();
 
 private:
     QVector<QThread*> threads;
     QVector<FtpClient*> clients;
+    QVector<int> runnings;
 };
 
 #endif // FTPMANAGER_H

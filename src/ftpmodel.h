@@ -14,6 +14,7 @@ public:
         Dir,
         RemoteFile,
         Status,
+        Percentage,
         Comment
     };
     explicit FtpModel(QObject *parent = nullptr);
@@ -56,8 +57,9 @@ public:
 
     void clear();
 public slots:
-    void updateProgress(int id, qint64 bytesCurrent, qint64 bytesTotal);
+    void updateProgress(int id, qint64 bytesCurrent, qint64 bytesTotal, int percentage);
     void updateComment(int id, QString msg);
+
 private:
     QVector<QString> m_columnHeaders;
     QVector<QVector<QVariant>> m_data;

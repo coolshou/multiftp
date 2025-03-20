@@ -22,7 +22,8 @@ void FtpManager::addFtpClient(int id, const QString &server, int port,
     connect(client, &FtpClient::downloadFinished, this, &FtpManager::onDownloadFinished);
     connect(client, &FtpClient::uploadFinished, this, &FtpManager::onUploadFinished);
     connect(client, &FtpClient::progress, this, &FtpManager::onProgress);
-    connect(client, &FtpClient::stop, thread, &QThread::quit);
+    // connect(client, &FtpClient::stop, thread, &QThread::quit);
+    connect(client, &FtpClient::stop, this, &FtpManager::onStop);
     connect(client, &FtpClient::errormsg, this, &FtpManager::onErrorMsg);
 
     threads.append(thread);
@@ -35,7 +36,10 @@ void FtpManager::start()
 {
     foreach(auto *th, threads){
         th->start();
+        int idx = threads.indexOf(th);
+        runnings.append(idx);
     }
+    emit started();
 }
 
 void FtpManager::stop()
@@ -43,6 +47,7 @@ void FtpManager::stop()
     foreach(auto *cl, clients){
         cl->setStop();
     }
+    emit stoped();
 }
 
 int FtpManager::count()
@@ -56,11 +61,13 @@ void FtpManager::clear()
         client->setStop();
         delete client;
     }
+    clients.clear();
     for (QThread *thread : threads) {
         thread->quit();
         thread->wait();
         delete thread;
     }
+    threads.clear();
 }
 
 void FtpManager::onDownloadFinished(int id)
@@ -73,15 +80,31 @@ void FtpManager::onUploadFinished(int id)
     qDebug() << id << " Upload Finished";
 }
 
-void FtpManager::onProgress(int id, qint64 bytesCurrent, qint64 bytesTotal)
+void FtpManager::onProgress(int id, qint64 bytesCurrent, qint64 bytesTotal, int percentage)
 {
-    qDebug() << id << " onProgress:" << QString::number(bytesCurrent) << " / " << QString::number(bytesTotal);
-    emit progress(id, bytesCurrent, bytesTotal);
+    // qDebug() << id << " onProgress:" << bytesCurrent << " / " << bytesTotal << " " << percentage << " %";
+    emit progress(id, bytesCurrent, bytesTotal, percentage);
 }
 
 void FtpManager::onErrorMsg(int id, QString msg)
 {
     emit errormsg(id, msg);
+}
+
+void FtpManager::onStop(int id)
+{
+    QThread *t = threads.at(id);
+    qDebug() << "onStop erase thread & client";
+    t->quit();
+    t->wait();
+    if (runnings.contains(id)){
+        runnings.remove(id);
+    }
+    // threads.remove(id ,1);
+    // clients.remove(id, 1);
+    if (runnings.size()<=0){
+        emit stoped();
+    }
 }
 
 

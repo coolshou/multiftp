@@ -4,7 +4,7 @@ FtpModel::FtpModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
     // Initialize column headers
-    m_columnHeaders = {"Local File", "DIR", "Remote File", "status", "comment"};
+    m_columnHeaders = {"Local File", "DIR", "Remote File", "status", "%", "comment"};
 }
 
 QVariant FtpModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -88,18 +88,7 @@ QVariant FtpModel::data(const QModelIndex &index, int role) const
         }
         return m_data[index.row()][index.column()];
     }
-    // switch (role)
-    // {
-    //     //case Qt::DecorationRole: // icon
-    //     case Qt::DisplayRole:
-    //     if (!m_data.isEmpty()){
-    //         return m_data[index.row()][index.column()];
-    //     }
-    //     default:
-    //         return QVariant();
-    // }
 
-    // FIXME: Implement me!
     return QVariant();
 }
 
@@ -119,6 +108,7 @@ bool FtpModel::setData(const QModelIndex &index, const QVariant &value, int role
 {
     if (data(index, role) != value) {
         // FIXME: Implement me!
+        m_data[index.row()][index.column()] = value;
         emit dataChanged(index, index, {role});
         return true;
     }
@@ -129,9 +119,13 @@ bool FtpModel::setData(int row, int col, const QVariant &value)
 {
     if (row<m_data.size()){
         if (col< m_data[row].size()){
-            m_data[row][col] = value;
+            QModelIndex idx = index(row,col);
+            // m_data[row][col] = value;
+            setData(idx, value);
+            return true;
         }
     }
+    return false;
 }
 
 Qt::ItemFlags FtpModel::flags(const QModelIndex &index) const
@@ -160,18 +154,16 @@ bool FtpModel::insertColumns(int column, int count, const QModelIndex &parent)
 
 void FtpModel::addData(const QVector<QVariant> &newRow)
 {
-    qDebug() << "newRow size:" << newRow.size() << " newRow:" << newRow;
-    qDebug() << "m_data size:" << m_data.size() << " m_data:" << m_data;
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
     m_data.append(newRow);
     endInsertRows();
-    qDebug() << "after insert m_data size:" << m_data.size() << " m_data:" << m_data;
 }
 
 bool FtpModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     beginRemoveRows(parent, row, row + count - 1);
     // FIXME: Implement me!
+    m_data.clear();
     endRemoveRows();
     return true;
 }
@@ -186,12 +178,15 @@ bool FtpModel::removeColumns(int column, int count, const QModelIndex &parent)
 
 void FtpModel::clear()
 {
-    qDebug() << "TODO: FtpModel::clear";
+    beginResetModel();
+    removeRows(0, m_data.size());
+    endResetModel();
 }
 
-void FtpModel::updateProgress(int id, qint64 bytesCurrent, qint64 bytesTotal)
+void FtpModel::updateProgress(int id, qint64 bytesCurrent, qint64 bytesTotal, int percentage)
 {
-    setData(id, Col::Status, QVariant(QString("%s/%s").arg(QString::number(bytesCurrent), QString::number(bytesTotal))));
+    setData(id, Col::Status, QVariant(QString("%1/%2").arg(QString::number(bytesCurrent), QString::number(bytesTotal))));
+    setData(id, Col::Percentage, QVariant(percentage));
 }
 
 void FtpModel::updateComment(int id, QString msg)

@@ -2,10 +2,11 @@
 #define FTPCLIENT_H
 
 #include <QObject>
-// #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QString>
 #include <QFile>
+#include <QTimer>
+
 #include "CurlEasy.h"
 
 class FtpClient : public QObject
@@ -30,8 +31,8 @@ public slots:
 signals:
     void downloadFinished(int id);
     void uploadFinished(int id);
-    void progress(int id, qint64 bytesCurrent, qint64 bytesTotal);
-    void stop();
+    void progress(int id, qint64 bytesCurrent, qint64 bytesTotal, int percentage);
+    void stop(int id);
     void errormsg(int id, QString msg);
 
 private slots:
@@ -39,26 +40,18 @@ private slots:
     void onTransferDone();
     void onTransferAborted();
 
-    // void onDownloadFinished();
-    // void onUploadFinished();
-    // void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
-    // void onDownloadReadyRead();
-    // void onDownloadError(QNetworkReply::NetworkError code);
-    // void onUploadProgress(qint64 bytesSent, qint64 bytesTotal);
-    // void onUploadError(QNetworkReply::NetworkError code);
-    // static size_t readUploadfile(char *buffer, size_t size, size_t nitems, void *stream);
-    // static size_t writeDownloadfile(char *buffer, size_t size, size_t nmemb, void *userdata);
-
-
 private:
-    // size_t readUploadfile(char *buffer, size_t size) ;
-    // size_t writeDownloadfile(char *buffer, size_t size) ;
     // QNetworkAccessManager *networkManager;
     void log(QString text);
+    QTimer m_timer;
     int m_id;
     CurlEasy *transfer;
     QFile *m_downloadFile = nullptr;
+    qint64 m_downloadsize;
+    qint64 m_current_downloadsize;
     QFile *m_uploadFile = nullptr;
+    qint64 m_uploadsize;
+    qint64 m_current_uploadsize;
     QString m_server;
     QString m_username;
     QString m_password;
@@ -72,8 +65,6 @@ private:
     int m_errorcode; // error code
     QString m_error; // error message
     bool m_stop;
-
-
 };
 
 #endif // FTPCLIENT_H

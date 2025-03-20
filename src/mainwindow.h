@@ -26,6 +26,8 @@ private slots:
     void onStart(bool checked);
     void onStop(bool checked);
     void setRunStatus(bool start);
+    void onStarted();
+    void onStoped();
 
 private:
     Ui::MainWindow *ui;

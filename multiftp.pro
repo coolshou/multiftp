@@ -65,13 +65,19 @@ win32 {
             $$sprintf($$QMAKE_MKDIR_CMD, $$DIST_DIRECTORY) $$escape_expand(\\n\\t) \
             $$QMAKE_COPY $$shell_quote($$shell_path($${PWD}/Debug/$${TARGET}.exe)) $$shell_quote($$shell_path($$DIST_FILE))
     }
+
     first.depends = $(first) multiftpbin
     export(multiftpbin.commands)
     QMAKE_EXTRA_TARGETS += first multiftpbin
 
+    DATAFILES.files += \
+       500M.qz
+    DATAFILES.path += \
+       "$$DIST_DIRECTORY"
     #PACKAGE_DOMAIN：
     #PACKAGE_VERSION：
     RC_CODEPAGE=0x04b0 #unicode：指定應該被包含進一個.rc檔案中的字碼頁，僅適用於Windows
     RC_LANG=0x0409 #en_US：指定應該被包含進一個.rc檔案中的語言，僅適用於Windows
     DISTFILES += $$PWD/images/multiftp.icon
+    INSTALLS += DATAFILES
 }

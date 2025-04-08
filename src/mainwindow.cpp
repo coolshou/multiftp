@@ -74,7 +74,7 @@ void MainWindow::onAdd(bool checked)
     int num = ui->sbNum->value();
     int iloop = ui->sbLoop->value();
     // QDir::absoluteFilePath();
-    // int id = m_ftpmanager->count();
+    int id = m_ftpmanager->count();
     QString username = ui->ftpUsername->text();
     QString password = ui->ftpPassword->text();
     QString server = ui->ftpServer->text();
@@ -96,16 +96,16 @@ void MainWindow::onAdd(bool checked)
         QString remotefile="";
 
         if (mode == FtpClient::FtpMode::Download){
-            localfile = org_localpath + tmp_localpath + QDir::separator() + org_localfile +"_"+QString::number(i);
+            localfile = org_localpath + tmp_localpath + QDir::separator() + org_localfile +"_"+QString::number(i+id);
         }else{
             localfile = org_localpath + org_localfile;
         }
         if (mode == FtpClient::FtpMode::Upload){
-            remotefile = QString("ftp://%1/%2/%3%4").arg(server, remotepath, org_remotefile, "_"+QString::number(i));
+            remotefile = QString("ftp://%1/%2/%3%4").arg(server, remotepath, org_remotefile, "_"+QString::number(i+id));
         }else{
             remotefile = QString("ftp://%1/%2").arg(server, org_remotefile);
         }
-        m_ftpmanager->addFtpClient(i, server , serverport,
+        m_ftpmanager->addFtpClient(i+id, server , serverport,
                                    username, password,
                                    localfile, remotefile, mode, iloop);
 

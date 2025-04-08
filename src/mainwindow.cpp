@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 
 #include <QDir>
+#include <QFile>
+#include <QByteArray>
+
 #include "ftpclient.h"
 
 
@@ -27,11 +30,30 @@ MainWindow::MainWindow(QWidget *parent)
     m_dirdelegate= new DirDelegate(ui->tableView);
     ui->tableView->setItemDelegateForColumn(1, m_dirdelegate);
     // ui->tableView->horizontalHeader()->show();
+    apppath = qApp->applicationDirPath();
+    // decompress 500M.qz
+    decompressFile(apppath+"500M.qz", apppath+"500M");
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::decompressFile(const QString &sourcePath, const QString &destinationPath)
+{
+    QFile sourceFile(sourcePath);
+    QFile destinationFile(destinationPath);
+
+    if (sourceFile.open(QFile::ReadOnly) && destinationFile.open(QFile::WriteOnly)) {
+        QByteArray compressedData = sourceFile.readAll();
+        QByteArray decompressedData = qUncompress(compressedData);
+        destinationFile.write(decompressedData);
+        sourceFile.close();
+        destinationFile.close();
+    } else {
+        qDebug() << "Failed to open files." << sourcePath;
+    }
 }
 
 void MainWindow::onAdd(bool checked)

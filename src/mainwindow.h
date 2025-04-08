@@ -19,6 +19,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void decompressFile(const QString &sourcePath, const QString &destinationPath);
 
 private slots:
     void onAdd(bool checked);
@@ -34,5 +35,6 @@ private:
     FtpManager *m_ftpmanager;
     FtpModel *m_ftpmodel;
     DirDelegate *m_dirdelegate;
+    QString apppath;
 };
 #endif // MAINWINDOW_H

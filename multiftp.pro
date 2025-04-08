@@ -55,6 +55,18 @@ win32 {
     QMAKE_TARGET_PRODUCT=$${TARGET} #：指定項目目標的產品名稱，僅適用於Windows
     QMAKE_TARGET_DESCRIPTION="multi ftp test" #：指定項目目標的描述資訊，僅適用於Windows
     DIST_DIRECTORY =  $$shell_quote($$shell_path($${PWD}/../$${TARGET}_$${QT_ARCH}))
+    DIST_FILE = $$shell_quote($$shell_path($$DIST_DIRECTORY/$${TARGET}.exe))
+    CONFIG(release, debug|release) {
+        release: multiftpbin.commands = \
+            $$QMAKE_COPY $$shell_quote($$shell_path($${PWD}/Release/$${TARGET}.exe)) $$shell_quote($$shell_path($$DIST_FILE))
+    } else {
+        debug: multiftpbin.commands = \
+            $$QMAKE_COPY $$shell_quote($$shell_path($${PWD}/Debug/$${TARGET}.exe)) $$shell_quote($$shell_path($$DIST_FILE))
+    }
+    first.depends = $(first) multiftpbin
+    export(multiftpbin.commands)
+    QMAKE_EXTRA_TARGETS += first multiftpbin
+
     #PACKAGE_DOMAIN：
     #PACKAGE_VERSION：
     RC_CODEPAGE=0x04b0 #unicode：指定應該被包含進一個.rc檔案中的字碼頁，僅適用於Windows

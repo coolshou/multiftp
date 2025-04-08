@@ -11,9 +11,10 @@ FtpManager::~FtpManager()
 
 void FtpManager::addFtpClient(int id, const QString &server, int port,
                               const QString &username, const QString &password,
-                              QString localfile, QString remotefile, FtpClient::FtpMode mode) {
+                              QString localfile, QString remotefile, FtpClient::FtpMode mode,
+                              int loop) {
     QThread *thread = new QThread;
-    FtpClient *client = new FtpClient(id, server, username, password, port);
+    FtpClient *client = new FtpClient(id, server, username, password, port, loop);
     client->setFtpMode(mode, localfile, remotefile);
     client->moveToThread(thread);
 
@@ -35,6 +36,7 @@ void FtpManager::addFtpClient(int id, const QString &server, int port,
 void FtpManager::start()
 {
     foreach(auto *th, threads){
+        qDebug() << "start thread:" << th;
         th->start();
         int idx = threads.indexOf(th);
         runnings.append(idx);
@@ -97,13 +99,14 @@ void FtpManager::onStop(int id)
     qDebug() << "onStop erase thread & client";
     t->quit();
     t->wait();
+
     if (runnings.contains(id)){
-        runnings.remove(id);
+        qDebug() << "remove runnings:" << id;
+        runnings.remove(id); //remove may cause index change?
     }
-    // threads.remove(id ,1);
-    // clients.remove(id, 1);
     if (runnings.size()<=0){
         emit stoped();
+        // runnings.clear();
     }
 }
 

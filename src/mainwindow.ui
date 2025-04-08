@@ -75,6 +75,9 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>TODO: select local file</string>
+         </property>
          <property name="text">
           <string>...</string>
          </property>
@@ -165,9 +168,12 @@
         </widget>
        </item>
        <item row="5" column="7">
-        <widget class="QSpinBox" name="spinBox">
+        <widget class="QSpinBox" name="sbLoop">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;0: forever&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="minimum">
+          <number>-1</number>
          </property>
         </widget>
        </item>
@@ -180,6 +186,9 @@
        </item>
        <item row="3" column="7">
         <widget class="QPushButton" name="pbAddRemote">
+         <property name="toolTip">
+          <string>TODO: select remote file</string>
+         </property>
          <property name="text">
           <string>...</string>
          </property>

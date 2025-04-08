@@ -16,7 +16,8 @@ public:
     ~FtpManager();
     void addFtpClient(int id, const QString &server, int port,
                       const QString &username, const QString &password,
-                      QString localfile, QString remotefile, FtpClient::FtpMode mode);
+                      QString localfile, QString remotefile, FtpClient::FtpMode mode,
+                      int loop=0);
     void start();
     void stop();
     int count();

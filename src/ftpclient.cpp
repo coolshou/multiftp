@@ -174,7 +174,7 @@ void FtpClient::work()
     }else if (m_ftpmode==FtpMode::Download){
         downloadFile(m_remotefile, m_localfile);
     }else{
-        qDebug() << m_id << " No ftp mode set(upload/download)!!";
+        emit errormsg(m_id , QString::number(m_id) + " No ftp mode set(upload/download)!!");
     }
 }
 
@@ -187,7 +187,7 @@ void FtpClient::onTransferProgress(qint64 downloadTotal, qint64 downloadNow, qin
         if (downloadTotal > 0) {
             //calc progress
             p = static_cast<int>((static_cast<double>(downloadNow) / downloadTotal)*100);
-            qDebug() << m_id << " Download p: " << QString::number(p);
+            // qDebug() << m_id << " Download p: " << QString::number(p);
             emit progress(m_id, downloadNow , downloadTotal, p);
         } else {
             // ui->progressBar->setValue(0);
@@ -195,7 +195,7 @@ void FtpClient::onTransferProgress(qint64 downloadTotal, qint64 downloadNow, qin
     }else{
         if (uploadTotal >0){
             p = static_cast<int>((static_cast<double>(uploadNow) / uploadTotal)*100);
-            qDebug() << m_id << " Upload p: " << p;
+            // qDebug() << m_id << " Upload p: " << p;
             emit progress(m_id, uploadNow, uploadTotal, p);
         }
     }
@@ -210,7 +210,7 @@ QString FtpClient::getDateTimeNow(qint64 sec)
 {
     QDateTime t = QDateTime::currentDateTime();
     if (sec){
-        t.addSecs(sec);
+        t= t.addSecs(sec);
     }
     return t.toString("yyyy-MM-dd hh:mm:ss.zzz");
 }
@@ -218,10 +218,10 @@ void FtpClient::onTransferDone()
 {
     // CurlEasy *transfer = qconst<CurlEasy*>(sender());
     if (transfer->result() != CURLE_OK) {
-        QString msg = QString("Transfer failed with curl error '%1'")
+        QString msg = QString(" Transfer failed with curl error '%1'")
                           .arg(curl_easy_strerror(transfer->result()));
         log(msg);
-        emit errormsg(m_id, msg);
+        emit errormsg(m_id, getDateTimeNow() + msg);
         // m_downloadFile->remove();
         if (m_ftpmode == FtpMode::Download){
             emit downloadFinished(m_id);
@@ -231,14 +231,14 @@ void FtpClient::onTransferDone()
     } else {
         int tsize=0;
         if (m_ftpmode == FtpMode::Download){
-            qDebug() << "m_downloadsize: " << QString::number(m_downloadsize);
+            // qDebug() << "m_downloadsize: " << QString::number(m_downloadsize);
             tsize = m_downloadFile->size();
         }else{
             tsize = m_uploadFile->size();
         }
-        QString msg = QString("Transfer complete. %1 bytes Transfered.").arg(tsize);
+        QString msg = QString(" Transfer complete. %1 bytes Transfered.").arg(tsize);
         log(msg);
-        emit(m_id, msg);
+        emit errormsg(m_id, getDateTimeNow()+msg);
     }
     if (m_ftpmode == FtpMode::Download){
         delete m_downloadFile;
@@ -247,14 +247,13 @@ void FtpClient::onTransferDone()
         delete m_uploadFile;
         m_uploadFile = nullptr;
     }
-    if (m_runtimes < m_loops){
+    if ((m_runtimes < m_loops)||(m_loops==-1)){
         m_stop = false;
-        qDebug() << "m_loops: " << m_runtimes << " / " << m_loops;
+        if (m_loops){
+            qDebug() << "m_loops: " << m_runtimes << " / " << m_loops;
+        }
         emit errormsg(m_id, "Next Test in 3 sec:"+ getDateTimeNow(3));
         m_timer.singleShot(3000, this, &FtpClient::work);
-        // if (m_loops>0){
-            // m_runtimes++;
-        // }
     }else{
         emit stop(m_id);
     }
@@ -262,17 +261,11 @@ void FtpClient::onTransferDone()
 
 void FtpClient::onTransferAborted()
 {
-    log(QString("Transfer aborted. "));
-    QString msg = "Transfer aborted.";
+    // log(QString("Transfer aborted. "));
+    QString msg = getDateTimeNow() + " Transfer aborted.";
     if (transfer->result() != CURLE_OK) {
         msg = msg +"("+ curl_easy_strerror(transfer->result())+")";
     }
+    log(msg);
     emit errormsg(m_id, msg);
-
-    // log(QString("Transfer aborted. %1 bytes downloaded.")
-    //         .arg(m_downloadFile->size()));
-
-    // m_downloadFile->remove();
-    // delete m_downloadFile;
-    // m_downloadFile = nullptr;
 }

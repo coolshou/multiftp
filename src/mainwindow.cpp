@@ -72,6 +72,7 @@ void MainWindow::onAdd(bool checked)
         mode = FtpClient::FtpMode::Upload;
     }
     int num = ui->sbNum->value();
+    int iloop = ui->sbLoop->value();
     // QDir::absoluteFilePath();
     // int id = m_ftpmanager->count();
     QString username = ui->ftpUsername->text();
@@ -106,7 +107,7 @@ void MainWindow::onAdd(bool checked)
         }
         m_ftpmanager->addFtpClient(i, server , serverport,
                                    username, password,
-                                   localfile, remotefile, mode);
+                                   localfile, remotefile, mode, iloop);
 
         QVector<QVariant> data;
         data << QVariant(localfile);

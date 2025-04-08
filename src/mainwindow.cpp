@@ -4,16 +4,21 @@
 #include <QDir>
 #include <QFile>
 #include <QByteArray>
+#include <QMessageBox>
 
 #include "ftpclient.h"
-
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    cfg = new QSettings(QSettings::IniFormat, QSettings::UserScope,
+                        APP_ORG, APP_NAME);
     ui->setupUi(this);
+    loadcfg();
+    ui->actionSave->setVisible(false);
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onShowAbout);
+    connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::onQuit);
     connect(ui->pbAdd, &QPushButton::clicked, this, &MainWindow::onAdd);
     connect(ui->pbClear, &QPushButton::clicked, this, &MainWindow::onClear);
 
@@ -43,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    savecfg();
     delete ui;
 }
 
@@ -60,6 +66,53 @@ void MainWindow::decompressFile(const QString &sourcePath, const QString &destin
     } else {
         qDebug() << "Failed to open files." << sourcePath;
     }
+}
+
+void MainWindow::loadcfg()
+{
+    cfg->beginGroup("main");
+    ui->ftpServer->setText(cfg->value("ftpServer", "192.168.70.21").toString());
+    ui->ftpPort->setValue(cfg->value("ftpPort", 21).toInt());
+    ui->ftpUsername->setText(cfg->value("ftpUsername", "1").toString());
+    ui->ftpPassword->setText(cfg->value("ftpPassword", "1").toString());
+    ui->ftpLocalfile->setText(cfg->value("ftpLocalfile", "500M").toString());
+    ui->ftpRemotefile->setText(cfg->value("ftpRemotefile", "500M").toString());
+    ui->ftpLocalPath->setText(cfg->value("ftpLocalPath", "tmp").toString());
+    ui->ftpRemotePath->setText(cfg->value("ftpRemotePath", "tmp").toString());
+    ui->sbNum->setValue(cfg->value("num", 1).toInt());
+    ui->sbLoop->setValue(cfg->value("loop", 0).toInt());
+    cfg->endGroup();
+}
+
+void MainWindow::savecfg()
+{
+    cfg->beginGroup("main");
+    cfg->setValue("ftpServer", ui->ftpServer->text());
+    cfg->setValue("ftpPort", ui->ftpPort->value());
+    cfg->setValue("ftpUsername", ui->ftpUsername->text());
+    cfg->setValue("ftpPassword", ui->ftpPassword->text());
+    cfg->setValue("ftpLocalfile", ui->ftpLocalfile->text());
+    cfg->setValue("ftpRemotefile", ui->ftpRemotefile->text());
+    cfg->setValue("ftpLocalPath", ui->ftpLocalPath->text());
+    cfg->setValue("ftpRemotePath", ui->ftpRemotePath->text());
+    cfg->setValue("num", ui->sbNum->value());
+    cfg->setValue("loop", ui->sbLoop->value());
+    cfg->endGroup();
+    cfg->sync();
+}
+
+void MainWindow::onShowAbout(bool checked)
+{
+    Q_UNUSED(checked)
+    //TODO: show about
+    QString msg = QString("%1\n use curl 8.13 do ftp upload/download").arg(APP_NAME);
+    QMessageBox::information(this, tr("About"), msg, QMessageBox::Ok);
+}
+
+void MainWindow::onQuit(bool checked)
+{
+    Q_UNUSED(checked)
+    qApp->quit();
 }
 
 void MainWindow::onAdd(bool checked)

@@ -28,6 +28,7 @@ SOURCES += \
     src/mainwindow.cpp
 
 HEADERS += \
+    src/comm.h \
     src/dirdelegate.h \
     src/ftpclient.h \
     src/ftpmanager.h \

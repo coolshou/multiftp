@@ -2,9 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSettings>
+
 #include "ftpmanager.h"
 #include "ftpmodel.h"
 #include "dirdelegate.h"
+
+#include "comm.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -22,6 +26,10 @@ public:
     void decompressFile(const QString &sourcePath, const QString &destinationPath);
 
 private slots:
+    void loadcfg();
+    void savecfg();
+    void onShowAbout(bool checked);
+    void onQuit(bool checked);
     void onAdd(bool checked);
     void onClear(bool checked);
     void onStart(bool checked);
@@ -36,5 +44,6 @@ private:
     FtpModel *m_ftpmodel;
     DirDelegate *m_dirdelegate;
     QString apppath;
+    QSettings *cfg;
 };
 #endif // MAINWINDOW_H

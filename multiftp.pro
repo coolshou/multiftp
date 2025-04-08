@@ -54,7 +54,7 @@ win32 {
 
     QMAKE_TARGET_PRODUCT=$${TARGET} #：指定項目目標的產品名稱，僅適用於Windows
     QMAKE_TARGET_DESCRIPTION="multi ftp test" #：指定項目目標的描述資訊，僅適用於Windows
-    DIST_DIRECTORY =  $$shell_quote($$shell_path($${PWD}/../$${TARGET}_$${QT_ARCH}))
+    DIST_DIRECTORY =  $$shell_quote($$shell_path($${PWD}/$${TARGET}_$${QT_ARCH}))
     DIST_FILE = $$shell_quote($$shell_path($$DIST_DIRECTORY/$${TARGET}.exe))
     CONFIG(release, debug|release) {
         release: multiftpbin.commands = \

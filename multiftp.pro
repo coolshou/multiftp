@@ -5,13 +5,15 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
-include(qtcurl/src/qtcurl.pri)
+
 unix:!android {
     CONFIG += link_pkgconfig
     PKGCONFIG += libcurl
     #LIBS += -lcurl
 }
 # TODO: windows curl
+
+include(qtcurl/src/qtcurl.pri)
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -52,6 +54,7 @@ win32 {
 
     QMAKE_TARGET_PRODUCT=$${TARGET} #：指定項目目標的產品名稱，僅適用於Windows
     QMAKE_TARGET_DESCRIPTION="multi ftp test" #：指定項目目標的描述資訊，僅適用於Windows
+    DIST_DIRECTORY =  $$shell_quote($$shell_path($${PWD}/../$${TARGET}_$${QT_ARCH}))
     #PACKAGE_DOMAIN：
     #PACKAGE_VERSION：
     RC_CODEPAGE=0x04b0 #unicode：指定應該被包含進一個.rc檔案中的字碼頁，僅適用於Windows

@@ -25,7 +25,7 @@ FtpClient::FtpClient(int id, const QString &server, const QString &username,
     connect(transfer, &CurlEasy::done, this, &FtpClient::onTransferDone);
     connect(transfer, &CurlEasy::aborted, this, &FtpClient::onTransferAborted);
     // connect(transfer, &CurlEasy::progress, this, &FtpClient::onTransferProgress);
-    m_timer = QTimer();
+    // m_timer = QTimer(this);
     m_timer.setInterval(3000);//3sec
 }
 FtpClient::~FtpClient() {
@@ -160,21 +160,21 @@ void FtpClient::uploadFile(const QString &localFile, const QString &remoteFile) 
 
 void FtpClient::setStop()
 {
+    m_stop = true;
     emit stop(m_id);
 }
 
 void FtpClient::work()
 {
     //the is qthread run
-    qDebug() << "mode:" << m_ftpmode << " m_runtimes:" << QString::number(m_runtimes);
+    qDebug() << m_id << " mode:" << m_ftpmode << " m_runtimes:" << QString::number(m_runtimes);
     if (m_ftpmode==FtpMode::Upload){
         uploadFile(m_localfile, m_remotefile);
     }else if (m_ftpmode==FtpMode::Download){
         downloadFile(m_remotefile, m_localfile);
     }else{
-        qDebug() << "No ftp mode set(upload/download)!!";
+        qDebug() << m_id << " No ftp mode set(upload/download)!!";
     }
-    qDebug() << "work end";
 }
 
 void FtpClient::onTransferProgress(qint64 downloadTotal, qint64 downloadNow, qint64 uploadTotal, qint64 uploadNow)
@@ -186,7 +186,7 @@ void FtpClient::onTransferProgress(qint64 downloadTotal, qint64 downloadNow, qin
         if (downloadTotal > 0) {
             //calc progress
             p = static_cast<int>((static_cast<double>(downloadNow) / downloadTotal)*100);
-            qDebug() << "Download p: " << QString::number(p);
+            qDebug() << m_id << " Download p: " << QString::number(p);
             emit progress(m_id, downloadNow , downloadTotal, p);
         } else {
             // ui->progressBar->setValue(0);
@@ -194,7 +194,7 @@ void FtpClient::onTransferProgress(qint64 downloadTotal, qint64 downloadNow, qin
     }else{
         if (uploadTotal >0){
             p = static_cast<int>((static_cast<double>(uploadNow) / uploadTotal)*100);
-            qDebug() << "Upload p: " << p;
+            qDebug() << m_id << " Upload p: " << p;
             emit progress(m_id, uploadNow, uploadTotal, p);
         }
     }
@@ -237,11 +237,16 @@ void FtpClient::onTransferDone()
         m_uploadFile = nullptr;
     }
     if (m_runtimes <= m_loops){
+        m_stop = false;
         qDebug() << "m_loops: " << m_runtimes << " / " << m_loops;
+        emit errormsg(m_id, "Next Test in 3 sec:");
         m_timer.singleShot(3000, this, &FtpClient::work);
-        m_runtimes++;
+        if (m_loops>0){
+            m_runtimes++;
+        }
+    }else{
+        emit stop(m_id);
     }
-    emit stop(m_id);
 }
 
 void FtpClient::onTransferAborted()

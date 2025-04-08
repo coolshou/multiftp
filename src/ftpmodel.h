@@ -13,7 +13,7 @@ public:
         Localfile,
         Dir,
         RemoteFile,
-        Status,
+        Progress,
         Percentage,
         Comment
     };

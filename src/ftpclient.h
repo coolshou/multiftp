@@ -6,7 +6,7 @@
 #include <QString>
 #include <QFile>
 #include <QTimer>
-
+#include <QDateTime>
 #include "CurlEasy.h"
 
 class FtpClient : public QObject
@@ -43,6 +43,7 @@ private slots:
 private:
     // QNetworkAccessManager *networkManager;
     void log(QString text);
+    QString getDateTimeNow(qint64 sec=0);
     QTimer m_timer;
     int m_id;
     CurlEasy *transfer;

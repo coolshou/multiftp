@@ -167,7 +167,8 @@ void FtpClient::setStop()
 void FtpClient::work()
 {
     //the is qthread run
-    qDebug() << m_id << " mode:" << m_ftpmode << " m_runtimes:" << QString::number(m_runtimes);
+    m_runtimes++;
+    qDebug() << "ID:" << m_id << " mode:" << m_ftpmode << " m_runtimes:" << QString::number(m_runtimes);
     if (m_ftpmode==FtpMode::Upload){
         uploadFile(m_localfile, m_remotefile);
     }else if (m_ftpmode==FtpMode::Download){
@@ -204,6 +205,15 @@ void FtpClient::log(QString text)
 {
     qDebug() << text;
 }
+
+QString FtpClient::getDateTimeNow(qint64 sec)
+{
+    QDateTime t = QDateTime::currentDateTime();
+    if (sec){
+        t.addSecs(sec);
+    }
+    return t.toString("yyyy-MM-dd hh:mm:ss.zzz");
+}
 void FtpClient::onTransferDone()
 {
     // CurlEasy *transfer = qconst<CurlEasy*>(sender());
@@ -226,8 +236,9 @@ void FtpClient::onTransferDone()
         }else{
             tsize = m_uploadFile->size();
         }
-        log(QString("Transfer complete. %1 bytes Transfered.").arg(tsize));
-        // ui->progressBar->setValue(ui->progressBar->maximum());
+        QString msg = QString("Transfer complete. %1 bytes Transfered.").arg(tsize);
+        log(msg);
+        emit(m_id, msg);
     }
     if (m_ftpmode == FtpMode::Download){
         delete m_downloadFile;
@@ -236,14 +247,14 @@ void FtpClient::onTransferDone()
         delete m_uploadFile;
         m_uploadFile = nullptr;
     }
-    if (m_runtimes <= m_loops){
+    if (m_runtimes < m_loops){
         m_stop = false;
         qDebug() << "m_loops: " << m_runtimes << " / " << m_loops;
-        emit errormsg(m_id, "Next Test in 3 sec:");
+        emit errormsg(m_id, "Next Test in 3 sec:"+ getDateTimeNow(3));
         m_timer.singleShot(3000, this, &FtpClient::work);
-        if (m_loops>0){
-            m_runtimes++;
-        }
+        // if (m_loops>0){
+            // m_runtimes++;
+        // }
     }else{
         emit stop(m_id);
     }

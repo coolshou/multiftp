@@ -22,6 +22,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_ftpmanager = new FtpManager();
     m_ftpmodel = new FtpModel(this);
+    connect(m_ftpmanager, &FtpManager::progress, m_ftpmodel, &FtpModel::updateProgress);
+    connect(m_ftpmanager, &FtpManager::errormsg, m_ftpmodel, &FtpModel::updateComment);
+    connect(m_ftpmanager, &FtpManager::started, this, &MainWindow::onStarted);
+    connect(m_ftpmanager, &FtpManager::stoped, this, &MainWindow::onStoped);
     // m_ftpmodel->
     m_ftpmodel->setHeaderData(0, Qt::Horizontal, "ID");
     ui->tableView->setModel(m_ftpmodel);
@@ -32,7 +36,9 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->tableView->horizontalHeader()->show();
     apppath = qApp->applicationDirPath();
     // decompress 500M.qz
-    decompressFile(apppath+"500M.qz", apppath+"500M");
+    QString srcfile = apppath+QDir::separator()+"500M.qz";
+    QString destfile = apppath+QDir::separator()+"500M";
+    decompressFile(srcfile, destfile);
 }
 
 MainWindow::~MainWindow()
@@ -67,7 +73,7 @@ void MainWindow::onAdd(bool checked)
     }
     int num = ui->sbNum->value();
     // QDir::absoluteFilePath();
-    int id = m_ftpmanager->count();
+    // int id = m_ftpmanager->count();
     QString username = ui->ftpUsername->text();
     QString password = ui->ftpPassword->text();
     QString server = ui->ftpServer->text();
@@ -98,13 +104,10 @@ void MainWindow::onAdd(bool checked)
         }else{
             remotefile = QString("ftp://%1/%2").arg(server, org_remotefile);
         }
-        m_ftpmanager->addFtpClient(id, server , serverport,
+        m_ftpmanager->addFtpClient(i, server , serverport,
                                    username, password,
                                    localfile, remotefile, mode);
-        connect(m_ftpmanager, &FtpManager::progress, m_ftpmodel, &FtpModel::updateProgress);
-        connect(m_ftpmanager, &FtpManager::errormsg, m_ftpmodel, &FtpModel::updateComment);
-        connect(m_ftpmanager, &FtpManager::started, this, &MainWindow::onStarted);
-        connect(m_ftpmanager, &FtpManager::stoped, this, &MainWindow::onStoped);
+
         QVector<QVariant> data;
         data << QVariant(localfile);
         data << QVariant(mode);

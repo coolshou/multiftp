@@ -22,47 +22,6 @@
     <item>
      <widget class="QWidget" name="widget" native="true">
       <layout class="QGridLayout" name="gridLayout">
-       <item row="3" column="2">
-        <widget class="QPushButton" name="pbAddLocal">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Ftp mode:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="ftpLocalfile">
-         <property name="text">
-          <string>500M</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="6">
-        <widget class="QPushButton" name="pbAddRemote">
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="5" colspan="2">
-        <widget class="QLineEdit" name="ftpPassword">
-         <property name="text">
-          <string>1</string>
-         </property>
-        </widget>
-       </item>
        <item row="5" column="1" colspan="2">
         <widget class="QComboBox" name="ftpMode">
          <item>
@@ -77,76 +36,10 @@
          </item>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_3">
+       <item row="4" column="1" colspan="2">
+        <widget class="QLineEdit" name="ftpLocalPath">
          <property name="text">
-          <string>Username:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" colspan="2">
-        <widget class="QLineEdit" name="ftpServer">
-         <property name="text">
-          <string>192.168.70.21</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="5" colspan="2">
-        <widget class="QSpinBox" name="ftpPort">
-         <property name="maximum">
-          <number>65534</number>
-         </property>
-         <property name="value">
-          <number>21</number>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="4">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Remote File:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" colspan="2">
-        <widget class="QLineEdit" name="ftpUsername">
-         <property name="text">
-          <string>1</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="4">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Port:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="4">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Num:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="5" colspan="2">
-        <widget class="QSpinBox" name="sbNum">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>FTP server</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="5">
-        <widget class="QLineEdit" name="ftpRemotefile">
-         <property name="text">
-          <string>500M</string>
+          <string>tmp</string>
          </property>
         </widget>
        </item>
@@ -157,10 +50,40 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="4">
-        <widget class="QLabel" name="label_4">
+       <item row="5" column="5">
+        <widget class="QSpinBox" name="sbNum">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="6">
+        <widget class="QLabel" name="label_11">
          <property name="text">
-          <string>Password:</string>
+          <string>Loop:</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::AutoText</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QPushButton" name="pbAddLocal">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Username:</string>
          </property>
         </widget>
        </item>
@@ -171,6 +94,20 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="1" colspan="2">
+        <widget class="QLineEdit" name="ftpServer">
+         <property name="text">
+          <string>192.168.70.21</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Port:</string>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="4">
         <widget class="QLabel" name="label_10">
          <property name="text">
@@ -178,17 +115,97 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1" colspan="2">
-        <widget class="QLineEdit" name="ftpLocalPath">
+       <item row="2" column="1" colspan="2">
+        <widget class="QLineEdit" name="ftpUsername">
+         <property name="text">
+          <string>1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="ftpLocalfile">
+         <property name="text">
+          <string>500M</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="4">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Num:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Ftp mode:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Remote File:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>FTP server</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Password:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="7">
+        <widget class="QSpinBox" name="spinBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;0: forever&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="5" colspan="3">
+        <widget class="QLineEdit" name="ftpRemotePath">
          <property name="text">
           <string>tmp</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="5" colspan="2">
-        <widget class="QLineEdit" name="ftpRemotePath">
+       <item row="3" column="7">
+        <widget class="QPushButton" name="pbAddRemote">
          <property name="text">
-          <string>tmp</string>
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="5" colspan="2">
+        <widget class="QLineEdit" name="ftpRemotefile">
+         <property name="text">
+          <string>500M</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="5" colspan="3">
+        <widget class="QLineEdit" name="ftpPassword">
+         <property name="text">
+          <string>1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5" colspan="3">
+        <widget class="QSpinBox" name="ftpPort">
+         <property name="maximum">
+          <number>65534</number>
+         </property>
+         <property name="value">
+          <number>21</number>
          </property>
         </widget>
        </item>

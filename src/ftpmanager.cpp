@@ -84,7 +84,6 @@ void FtpManager::onUploadFinished(int id)
 
 void FtpManager::onProgress(int id, qint64 bytesCurrent, qint64 bytesTotal, int percentage)
 {
-    // qDebug() << id << " onProgress:" << bytesCurrent << " / " << bytesTotal << " " << percentage << " %";
     emit progress(id, bytesCurrent, bytesTotal, percentage);
 }
 
@@ -96,17 +95,14 @@ void FtpManager::onErrorMsg(int id, QString msg)
 void FtpManager::onStop(int id)
 {
     QThread *t = threads.at(id);
-    qDebug() << "onStop erase thread & client";
     t->quit();
     t->wait();
-
     if (runnings.contains(id)){
-        qDebug() << "remove runnings:" << id;
-        runnings.remove(id); //remove may cause index change?
+        int idx = runnings.indexOf(id);
+        runnings.remove(idx);
     }
     if (runnings.size()<=0){
         emit stoped();
-        // runnings.clear();
     }
 }
 

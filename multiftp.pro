@@ -48,6 +48,7 @@ RESOURCES += \
 win32 {
     # windows resources
     #    CONFIG += embed_manifest_exe
+    # nmake release-windeployqt
     CONFIG += windeployqt
 
     RC_ICONS=$$PWD/images/multiftp.ico #：指定應該被包含進一個.rc檔案中的圖示，僅適用於Windows
@@ -79,5 +80,6 @@ win32 {
     RC_CODEPAGE=0x04b0 #unicode：指定應該被包含進一個.rc檔案中的字碼頁，僅適用於Windows
     RC_LANG=0x0409 #en_US：指定應該被包含進一個.rc檔案中的語言，僅適用於Windows
     DISTFILES += $$PWD/images/multiftp.icon
+    # nmake install
     INSTALLS += DATAFILES
 }

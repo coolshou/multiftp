@@ -103,6 +103,9 @@ Section "MultiFtp" Section1
 	CreateShortCut "$SMPROGRAMS\MultiFtp\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 
 	Call check_vc_redist
+	; Add an application to the firewall exception list
+	SimpleFC::AddApplication "multiftp" "$INSTDIR\${APPNAME}.exe" 0 2 "" 1
+	Pop $0 ; return error(1)/success(0)
 
 SectionEnd
 
@@ -249,7 +252,7 @@ FunctionEnd
 Function un.install_multiftp
     call un.kill_process
     ; Remove an application from the firewall exception list
-    SimpleFC::RemoveApplication "$INSTDIR\${QIPERFC_NAME}"
+    SimpleFC::RemoveApplication "$INSTDIR\${APPNAME}.exe"
     Pop $0 ; return error(1)/success(0)
 FunctionEnd
 

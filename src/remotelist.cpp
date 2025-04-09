@@ -8,7 +8,7 @@ RemoteList::RemoteList(QUrl url, QString username, QString passwd, int port,
     : QWidget{parent},
     m_url(url), m_username(username), m_password(passwd) , m_port(port)
 {
-    transfer = CurlEasy(this);
+    transfer = new CurlEasy(this);
     connect(transfer, &CurlEasy::done, this, &RemoteList::onTransferDone);
 }
 

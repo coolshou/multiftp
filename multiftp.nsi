@@ -4,6 +4,10 @@
 !define APPNAME "MultiFtp"
 !define APPVERSION "1.0"
 !define APPNAMEANDVERSION "MultiFtp $APPVERSION"
+!define APPDOMAIN "coolshou.idv.tw"
+!ifndef APPFileVersion
+!define APPFileVersion 1.0.11404.09
+!endif
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"
@@ -13,12 +17,16 @@ OutFile "C:\Program Files (x86)\Venis\MultiFtp-setup-$APPVERSION.exe"
 
 ; Use compression
 SetCompressor LZMA
-
+!include "x64.nsh"
 ; Modern interface settings
 !include "MUI.nsh"
+!include "nsis\nsProcess.nsh"
+!include "nsis\FileAssociation.nsh"
+!include "WordFunc.nsh"
+!insertmacro VersionCompare
 
 !define MUI_ABORTWARNING
-
+!define MUI_ICON "images\${APPNAME}.ico"
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
@@ -30,8 +38,18 @@ SetCompressor LZMA
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
-Section "MultiFtp" Section1
+VIProductVersion ${APPFileVersion}
+VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "${APPNAMEANDVERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductVersion" "${APPVERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "multi ftp"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "${APPDOMAIN}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "${APPNAME} is a trademark of ${APPDOMAIN}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "(C)2023-2025 ${APPDOMAIN}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "${APPNAME}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "${APPFileVersion}"
 
+Section "MultiFtp" Section1
+	call kill_process
 	; Set Section properties
 	SetOverwrite on
 
@@ -75,12 +93,13 @@ Section "MultiFtp" Section1
 	SetOutPath "$INSTDIR\translations"
 	File "multiftp_x86_64\translations\qt_en.qm"
 	File "multiftp_x86_64\translations\qt_zh_TW.qm"
-	
-	
+
 	CreateShortCut "$DESKTOP\MultiFtp.lnk" "$INSTDIR\multiftp.exe"
 	CreateDirectory "$SMPROGRAMS\MultiFtp"
 	CreateShortCut "$SMPROGRAMS\MultiFtp\MultiFtp.lnk" "$INSTDIR\multiftp.exe"
 	CreateShortCut "$SMPROGRAMS\MultiFtp\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+
+	Call check_vc_redist
 
 SectionEnd
 
@@ -150,4 +169,68 @@ Section Uninstall
 
 SectionEnd
 
+Function .onInit
+    ${If} ${RunningX64}
+        SetRegView 64
+    ${EndIf}
+
+FunctionEnd
+
+Function install_vc_redist
+    DetailPrint "Install VC runtime for qiperf..."
+    ;not installed, so run the installer in quiet mode
+    ExecWait '$INSTDIR\vc_redist.x64.exe /q /norestart'
+FunctionEnd
+
+Function check_vc_redist
+    DetailPrint "Check VC runtime..."
+    ${If} ${RunningX64}
+            ReadRegStr $1 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Installed"
+            StrCmp $1 1 installed install_vc_redist
+    ${Else}
+            ReadRegStr $1 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86" "Installed"
+            StrCmp $1 1 installed install_vc_redist
+    ${EndIf}
+
+    installed:
+    ; Visual Studio 2017 version 15.6 introduced msvcp140_1
+    ; Visual Studio 2019 ? introduced msvcp140_2
+    ; 14.24 OKs
+
+    ;check vc_redist version <14.20 is not good
+    ${If} ${RunningX64}
+            ReadRegStr $1 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Minor"
+            ;StrCmp $1 24 version_ok
+    ${Else}
+            ReadRegStr $1 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86" "Minor"
+            ;StrCmp $1 24 version_ok
+    ${EndIf}
+    IntCmp $1 24 issame install_vc_redist morethan
+    install_vc_redist:
+    ;${If} $var >= 2
+        call install_vc_redist
+    ;${EndIf}
+
+    issame:
+    morethan:
+    ;we are done
+
+FunctionEnd
+!macro kill_process un
+Function ${un}kill_process
+    #kill qiperfd
+    ${nsProcess::FindProcess} "${APPNAME}" $R0
+    ${If} $R0 == 0
+        DetailPrint "${APPNAME} is running. Closing it down"
+        ${nsProcess::KillProcess} "${APPNAME}" $R0
+        ;DetailPrint "Waiting for ${APPNAME} to close"
+        ;Sleep 2000
+    ${Else}
+        DetailPrint "${APPNAME} was not found to be running"
+    ${EndIf}
+    ${nsProcess::Unload}
+FunctionEnd
+!macroend
+!insertmacro kill_process ""
+!insertmacro kill_process "un."
 ; eof

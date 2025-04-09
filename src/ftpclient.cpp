@@ -8,6 +8,8 @@
 #include <QFileInfo>
 #include <QDir>
 
+#include "comm.h"
+
 #include <QDebug>
 
 FtpClient::FtpClient(int id, const QString &server, const QString &username,
@@ -206,14 +208,6 @@ void FtpClient::log(QString text)
     qDebug() << text;
 }
 
-QString FtpClient::getDateTimeNow(qint64 sec)
-{
-    QDateTime t = QDateTime::currentDateTime();
-    if (sec){
-        t= t.addSecs(sec);
-    }
-    return t.toString("yyyy-MM-dd hh:mm:ss.zzz");
-}
 void FtpClient::onTransferDone()
 {
     // CurlEasy *transfer = qconst<CurlEasy*>(sender());

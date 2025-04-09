@@ -7,7 +7,7 @@
 #include "ftpmanager.h"
 #include "ftpmodel.h"
 #include "dirdelegate.h"
-
+#include "remotelist.h"
 #include "comm.h"
 
 QT_BEGIN_NAMESPACE
@@ -50,5 +50,6 @@ private:
     QSettings *cfg;
     QString tmppath;
     QString oldfilepath;
+    RemoteList *m_remotelist;
 };
 #endif // MAINWINDOW_H

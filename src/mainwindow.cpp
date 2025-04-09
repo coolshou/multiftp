@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     QString srcfile = apppath+QDir::separator()+"500M.qz";
     QString destfile = apppath+QDir::separator()+"500M";
     decompressFile(srcfile, destfile);
+
 }
 
 MainWindow::~MainWindow()
@@ -223,7 +224,12 @@ void MainWindow::onAddLocal(bool checked)
 void MainWindow::onAddRemote(bool checked)
 {
     Q_UNUSED(checked)
-
+    QUrl url(QString("ftp://%1/").arg(ui->ftpServer->text()));
+    QString username = ui->ftpUsername->text();
+    QString password = ui->ftpPassword->text();
+    int port = ui->ftpPort->value();
+    m_remotelist= new RemoteList(url, username, password, port, this);
+    m_remotelist->show();
 }
 
 void MainWindow::onStart(bool checked)

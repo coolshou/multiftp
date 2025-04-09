@@ -39,7 +39,8 @@ HEADERS += \
     src/remotelist.h
 
 FORMS += \
-    src/mainwindow.ui
+    src/mainwindow.ui \
+    src/remotelist.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

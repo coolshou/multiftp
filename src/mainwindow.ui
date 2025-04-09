@@ -163,7 +163,7 @@
        <item row="5" column="7">
         <widget class="QSpinBox" name="sbLoop">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;0: forever&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;-1: forever&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="minimum">
           <number>-1</number>

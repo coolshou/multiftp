@@ -11,7 +11,7 @@ class RemoteList : public QWidget
 public:
     explicit RemoteList(QUrl url, QString username, QString passwd, int port=21,
                         QWidget *parent = nullptr);
-    void list(QUrl url="", QString username="", QString passwd="", int port=21);
+    void list(QUrl url=QUrl(""), QString username="", QString passwd="", int port=21);
 signals:
     void errormsg(QString msg);
 private slots:

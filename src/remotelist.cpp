@@ -56,19 +56,18 @@ void RemoteList::list(QUrl url, QString username, QString passwd, int port)
     transfer->set(CURLOPT_PORT, m_port);
     transfer->set(CURLOPT_USERNAME, m_username);
     transfer->set(CURLOPT_PASSWORD, m_password);
-    // transfer->set(CURLOPT_DIRLISTONLY, 1L);
+    // transfer->set(CURLOPT_DIRLISTONLY, 1L); // this only return filename, can not distinguish is dir or file
     transfer->perform();
 }
 
 size_t RemoteList::writecallback(char *data, size_t size)
 {
-    // qDebug() << "writecallback:" << data << " size:" << size;
     QString tmp(data);
     QStringList  ds = tmp.split("\n");
     foreach(QString d, ds){
         QStringList ls = d.split(" ");
         if (ls.size()>1){
-            qDebug() << " data: " << ls.size() << "  => " << ls;
+            // qDebug() << " data: " << ls.size() << "  => " << ls;
             QList<QString> l;
             l.append(ls.first());
             l.append(ls.last());
@@ -98,9 +97,6 @@ QString RemoteList::getRemoteFileName()
             return ds.last()->text();
         }
     }
-    // foreach(auto d, ds){
-    //     qDebug() << "getRemoteFileName:" << d->text();
-    // }
     return "";
 }
 
@@ -112,7 +108,6 @@ void RemoteList::onTransferDone()
         emit errormsg( getDateTimeNow() + msg);
     }else{
         qDebug() << "perform list down";
-        // ui->textEdit->append(m_datas.join(""));
         ui->tableWidget->setRowCount(m_dirdatas.count()+m_datas.count());
         int row=0;
         foreach (const QList<QString> &map, m_dirdatas){

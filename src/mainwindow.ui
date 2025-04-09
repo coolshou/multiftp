@@ -36,13 +36,6 @@
          </item>
         </widget>
        </item>
-       <item row="4" column="1" colspan="2">
-        <widget class="QLineEdit" name="ftpLocalPath">
-         <property name="text">
-          <string>tmp</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
@@ -215,6 +208,20 @@
          </property>
          <property name="value">
           <number>21</number>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="ftpLocalPath">
+         <property name="text">
+          <string>tmp</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="QPushButton" name="pbSelLocalPath">
+         <property name="text">
+          <string>Select</string>
          </property>
         </widget>
        </item>

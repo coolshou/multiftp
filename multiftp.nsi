@@ -7,9 +7,12 @@
 !endif
 !define APPNAMEANDVERSION "${APPNAME} ${APPVERSION}"
 !define APPDOMAIN "coolshou.idv.tw"
+!define APPURL "https://github.com/coolshou/qiperf"
 !ifndef APPFileVersion
 !define APPFileVersion 1.0.11404.09
 !endif
+!define WIN64 ; force  64 bit, comment out for 32 bit
+!define PRODUCT_REG_KEY "Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"
@@ -112,8 +115,14 @@ SectionEnd
 Section -FinishSection
 
 	WriteRegStr HKLM "Software\${APPNAME}" "" "$INSTDIR"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayName" "${APPNAME}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString" "$INSTDIR\uninstall.exe"
+	WriteRegStr HKLM "Software\${PRODUCT_REG_KEY}" "DisplayName" "${APPNAME}"
+	WriteRegStr HKLM "Software\${PRODUCT_REG_KEY}" "DisplayIcon" "$INSTDIR\${APPNAME}.ico"
+	WriteRegStr HKLM "Software\${PRODUCT_REG_KEY}" "Publisher" "${APPDOMAIN}"
+	WriteRegStr HKLM "Software\${PRODUCT_REG_KEY}" "DisplayVersion" "${APPFileVersion}"
+	WriteRegStr HKLM "Software\${PRODUCT_REG_KEY}" "HelpLink" "${APPURL}"
+	WriteRegDWORD HKLM "Software\${PRODUCT_REG_KEY}" "NoModify" "1"
+	WriteRegDWORD HKLM "Software\${PRODUCT_REG_KEY}" "NoRepair" "1"
+	WriteRegStr HKLM "Software\${PRODUCT_REG_KEY}" "UninstallString" "$INSTDIR\uninstall.exe"
 	WriteUninstaller "$INSTDIR\uninstall.exe"
 
 SectionEnd
@@ -126,6 +135,9 @@ SectionEnd
 ;Uninstall section
 Section Uninstall
 	Call un.install_multiftp
+!ifdef WIN64
+        SetRegView 64
+!endif
 	;Remove from registry...
 	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
 	DeleteRegKey HKLM "SOFTWARE\${APPNAME}"
@@ -184,9 +196,15 @@ Section Uninstall
 SectionEnd
 
 Function .onInit
-    ${If} ${RunningX64}
-        SetRegView 64
-    ${EndIf}
+	${If} ${RunningX64}
+	!ifdef WIN64
+    		SetRegView 64
+	!endif
+	${EndIf}
+
+    !ifdef WIN64
+      strcpy $INSTDIR "$PROGRAMFILES64\${APPNAME}"
+    !endif
 
 FunctionEnd
 

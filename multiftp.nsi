@@ -20,7 +20,7 @@
 Name "${APPNAMEANDVERSION}"
 InstallDir "$PROGRAMFILES\${APPNAME}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "..\${APPNAME}-setup-${APPVERSION}.exe"
+OutFile "..\${APPNAME}-setup-${APPFileVersion}.exe"
 
 !include "FileFunc.nsh"
 ; Use compression

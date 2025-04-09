@@ -5,7 +5,7 @@
 !ifndef APPVERSION
 !define APPVERSION "1.0"
 !endif
-!define APPNAMEANDVERSION "${APPNAME} $APPVERSION"
+!define APPNAMEANDVERSION "${APPNAME} ${APPVERSION}"
 !define APPDOMAIN "coolshou.idv.tw"
 !ifndef APPFileVersion
 !define APPFileVersion 1.0.11404.09
@@ -15,7 +15,7 @@
 Name "${APPNAMEANDVERSION}"
 InstallDir "$PROGRAMFILES\${APPNAME}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "..\${APPNAME}-setup-$APPVERSION.exe"
+OutFile "..\${APPNAME}-setup-${APPVERSION}.exe"
 
 !include "FileFunc.nsh"
 ; Use compression

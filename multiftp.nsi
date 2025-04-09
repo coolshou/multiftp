@@ -17,6 +17,7 @@ InstallDir "$PROGRAMFILES\MultiFtp"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
 OutFile "C:\Program Files (x86)\Venis\MultiFtp-setup-$APPVERSION.exe"
 
+!include "FileFunc.nsh"
 ; Use compression
 SetCompressor LZMA
 !include "x64.nsh"
@@ -218,6 +219,7 @@ Function check_vc_redist
     ;we are done
 
 FunctionEnd
+
 !macro kill_process un
 Function ${un}kill_process
     #kill qiperfd

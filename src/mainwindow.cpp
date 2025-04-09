@@ -85,8 +85,8 @@ void MainWindow::loadcfg()
     ui->ftpPassword->setText(cfg->value("ftpPassword", "1").toString());
     ui->ftpLocalfile->setText(cfg->value("ftpLocalfile", "500M").toString());
     ui->ftpRemotefile->setText(cfg->value("ftpRemotefile", "500M").toString());
-    QString localpath = tmppath+QDir::separator()+"tmp";
-    ui->ftpLocalPath->setText(cfg->value("ftpLocalPath", localpath).toString());
+    QString localpath = tmppath+"tmp";
+    ui->ftpLocalPath->setText(cfg->value("ftpLocalPath", QDir::toNativeSeparators(localpath)).toString());
     ui->ftpRemotePath->setText(cfg->value("ftpRemotePath", "tmp").toString());
     ui->sbNum->setValue(cfg->value("num", 1).toInt());
     ui->sbLoop->setValue(cfg->value("loop", 0).toInt());
@@ -171,6 +171,7 @@ void MainWindow::onAdd(bool checked)
                 localfile = org_localpath + org_localfile;
             }
         }
+        localfile = QDir::toNativeSeparators(localfile);
         if (mode == FtpClient::FtpMode::Upload){
             remotefile = QString("ftp://%1/%2/%3%4").arg(server, remotepath, org_localfile, "_"+QString::number(i+id));
         }else{
@@ -184,7 +185,7 @@ void MainWindow::onAdd(bool checked)
         data << QVariant(localfile);
         data << QVariant(mode);
         data << QVariant(remotefile);
-        data << QVariant(""); //status
+        data << QVariant(""); //progress
         data << QVariant(""); //percentage
         data << QVariant(""); //comment
         m_ftpmodel->addData(data);
@@ -203,7 +204,7 @@ void MainWindow::onSelectLocalPath(bool checked)
     Q_UNUSED(checked)
     QString folder = QFileDialog::getExistingDirectory(this, "Select Folder for save the download file");
     if (!folder.isEmpty()) {
-        ui->ftpLocalPath->setText(folder);
+        ui->ftpLocalPath->setText(QDir::toNativeSeparators(folder));
     }
 }
 
@@ -244,14 +245,12 @@ void MainWindow::onStart(bool checked)
     Q_UNUSED(checked)
     //start run all ftps
     m_ftpmanager->start();
-
 }
 
 void MainWindow::onStop(bool checked)
 {
     Q_UNUSED(checked)
     m_ftpmanager->stop();
-
 }
 
 void MainWindow::setRunStatus(bool start)
@@ -269,6 +268,5 @@ void MainWindow::onStarted()
 
 void MainWindow::onStoped()
 {
-    qDebug() << "MainWindow::onStoped";
     setRunStatus(false);
 }

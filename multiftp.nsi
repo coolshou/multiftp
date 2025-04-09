@@ -1,6 +1,5 @@
 ; Script generated with the Venis Install Wizard
 !addplugindir "nsis\"
-
 ; Define your application name
 !define APPNAME "multiftp"
 !ifndef APPVERSION
@@ -118,12 +117,12 @@ SectionEnd
 
 ; Modern install component descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-	!insertmacro MUI_DESCRIPTION_TEXT ${Section1} ""
+	!insertmacro MUI_DESCRIPTION_TEXT ${Section1} "multiftp"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;Uninstall section
 Section Uninstall
-
+	Call un.install_multiftp
 	;Remove from registry...
 	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
 	DeleteRegKey HKLM "SOFTWARE\${APPNAME}"
@@ -149,7 +148,7 @@ Section Uninstall
 	Delete "$INSTDIR\multiftp.exe"
 	Delete "$INSTDIR\opengl32sw.dll"
 	Delete "$INSTDIR\vc_redist.x64.exe"
-  Delete "$INSTDIR\generic\qtuiotouchplugin.dll"
+	Delete "$INSTDIR\generic\qtuiotouchplugin.dll"
 	Delete "$INSTDIR\iconengines\qsvgicon.dll"
 	Delete "$INSTDIR\imageformats\qgif.dll"
 	Delete "$INSTDIR\imageformats\qicns.dll"
@@ -169,6 +168,14 @@ Section Uninstall
 	Delete "$INSTDIR\translations\qt_zh_TW.qm"
 	; Remove remaining directories
 	RMDir "$SMPROGRAMS\MultiFtp"
+	RMDir "$INSTDIR\generic\"
+	RMDir "$INSTDIR\iconengines\"
+	RMDir "$INSTDIR\imageformats\"
+	RMDir "$INSTDIR\networkinformation\"
+	RMDir "$INSTDIR\platforms\"
+	RMDir "$INSTDIR\styles\"
+	RMDir "$INSTDIR\tls\"
+	RMDir "$INSTDIR\translations\"
 	RMDir "$INSTDIR\"
 
 SectionEnd
@@ -238,6 +245,13 @@ FunctionEnd
 !macroend
 !insertmacro kill_process ""
 !insertmacro kill_process "un."
+
+Function un.install_multiftp
+    call un.kill_process
+    ; Remove an application from the firewall exception list
+    SimpleFC::RemoveApplication "$INSTDIR\${QIPERFC_NAME}"
+    Pop $0 ; return error(1)/success(0)
+FunctionEnd
 
 Function .oninstsuccess
     # final install success, run qiperftray

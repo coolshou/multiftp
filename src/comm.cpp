@@ -1,5 +1,8 @@
 #include "comm.h"
 
+
+#include <QDateTime>
+
 QString getDateTimeNow(qint64 sec)
 {
     QDateTime t = QDateTime::currentDateTime();

@@ -20,6 +20,7 @@ include(qtcurl/src/qtcurl.pri)
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/comm.cpp \
     src/dirdelegate.cpp \
     src/ftpclient.cpp \
     src/ftpmanager.cpp \

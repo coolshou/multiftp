@@ -25,7 +25,8 @@ SOURCES += \
     src/ftpmanager.cpp \
     src/ftpmodel.cpp \
     src/main.cpp \
-    src/mainwindow.cpp
+    src/mainwindow.cpp \
+    src/remotelist.cpp
 
 HEADERS += \
     src/comm.h \
@@ -33,7 +34,8 @@ HEADERS += \
     src/ftpclient.h \
     src/ftpmanager.h \
     src/ftpmodel.h \
-    src/mainwindow.h
+    src/mainwindow.h \
+    src/remotelist.h
 
 FORMS += \
     src/mainwindow.ui

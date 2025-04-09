@@ -148,16 +148,10 @@ void FtpClient::uploadFile(const QString &localFile, const QString &remoteFile) 
     transfer->set(CURLOPT_PORT, m_port);
     transfer->set(CURLOPT_USERNAME, m_username);
     transfer->set(CURLOPT_PASSWORD, m_password);
-    // transfer->set(CURLOPT_USERPWD, QString("%1:%2").arg(m_username,m_password));
+    transfer->set(CURLOPT_FTP_CREATE_MISSING_DIRS, CURLFTP_CREATE_DIR); // create dir if remote does not have it
     // Enable uploading
     transfer->set(CURLOPT_UPLOAD, 1L);
-    // transfer->set(CURLOPT_READDATA, m_uploadFile);
-    // Set the file to be uploaded
-    // transfer->set(CURLOPT_READDATA, m_uploadFile);// read func callback
-    // transfer->set(CURLOPT_INFILESIZE_LARGE, m_uploadFile->size());
-    log("uploadFile started.");
     transfer->perform();
-
 }
 
 void FtpClient::setStop()
@@ -233,24 +227,26 @@ void FtpClient::onTransferDone()
         QString msg = QString(" Transfer complete. %1 bytes Transfered.").arg(tsize);
         log(msg);
         emit errormsg(m_id, getDateTimeNow()+msg);
-    }
-    if (m_ftpmode == FtpMode::Download){
-        delete m_downloadFile;
-        m_downloadFile = nullptr;
-    }else{
-        delete m_uploadFile;
-        m_uploadFile = nullptr;
-    }
-    if ((m_runtimes < m_loops)||(m_loops==-1)){
-        m_stop = false;
-        if (m_loops){
-            qDebug() << "m_loops: " << m_runtimes << " / " << m_loops;
+
+        if (m_ftpmode == FtpMode::Download){
+            delete m_downloadFile;
+            m_downloadFile = nullptr;
+        }else{
+            delete m_uploadFile;
+            m_uploadFile = nullptr;
         }
-        emit errormsg(m_id, "Next Test in 3 sec:"+ getDateTimeNow(3));
-        m_timer.singleShot(3000, this, &FtpClient::work);
-    }else{
-        emit stop(m_id);
+        if ((m_runtimes < m_loops)||(m_loops==-1)){
+            m_stop = false;
+            if (m_loops){
+                qDebug() << "m_loops: " << m_runtimes << " / " << m_loops;
+            }
+            emit errormsg(m_id, "Next Test in 3 sec:"+ getDateTimeNow(3));
+            m_timer.singleShot(3000, this, &FtpClient::work);
+        }else{
+            emit stop(m_id);
+        }
     }
+
 }
 
 void FtpClient::onTransferAborted()

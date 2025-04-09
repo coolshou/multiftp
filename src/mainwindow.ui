@@ -69,7 +69,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>TODO: select local file</string>
+          <string>select local file for upload</string>
          </property>
          <property name="text">
           <string>...</string>
@@ -180,7 +180,7 @@
        <item row="3" column="7">
         <widget class="QPushButton" name="pbAddRemote">
          <property name="toolTip">
-          <string>TODO: select remote file</string>
+          <string>select remote file for download</string>
          </property>
          <property name="text">
           <string>...</string>

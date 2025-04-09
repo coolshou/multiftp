@@ -33,6 +33,8 @@ private slots:
     void onAdd(bool checked);
     void onClear(bool checked);
     void onSelectLocalPath(bool checked);
+    void onAddLocal(bool checked);
+    void onAddRemote(bool checked);
     void onStart(bool checked);
     void onStop(bool checked);
     void setRunStatus(bool start);
@@ -47,5 +49,6 @@ private:
     QString apppath;
     QSettings *cfg;
     QString tmppath;
+    QString oldfilepath;
 };
 #endif // MAINWINDOW_H

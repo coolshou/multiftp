@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     tmppath = QStandardPaths::writableLocation(QStandardPaths::TempLocation)+
               QDir::separator();
-
+    oldfilepath = "";
     cfg = new QSettings(QSettings::IniFormat, QSettings::UserScope,
                         APP_ORG, APP_NAME);
     ui->setupUi(this);
@@ -27,7 +27,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pbAdd, &QPushButton::clicked, this, &MainWindow::onAdd);
     connect(ui->pbClear, &QPushButton::clicked, this, &MainWindow::onClear);
     connect(ui->pbSelLocalPath, &QPushButton::clicked, this, &MainWindow::onSelectLocalPath);
-
+    connect(ui->pbAddLocal, &QPushButton::clicked, this, &MainWindow::onAddLocal);
+    connect(ui->pbAddRemote, &QPushButton::clicked, this, &MainWindow::onAddRemote);
     connect(ui->actionStart, &QAction::triggered, this, &MainWindow::onStart);
     connect(ui->actionStop, &QAction::triggered, this, &MainWindow::onStop);
 
@@ -139,11 +140,11 @@ void MainWindow::onAdd(bool checked)
     QString password = ui->ftpPassword->text();
     QString server = ui->ftpServer->text();
     int serverport = ui->ftpPort->value();
-    QString org_localfile = ui->ftpLocalfile->text();
+    QString org_localfilepath = ui->ftpLocalfile->text();
     QString org_localpath = "";
     QString tmp_localpath = ui->ftpLocalPath->text();
-    QFileInfo f(org_localfile);
-    org_localfile = f.fileName();
+    QFileInfo f(org_localfilepath);
+    QString org_localfile = f.fileName();
     if (!QDir::isAbsolutePath(tmp_localpath)){
         org_localpath = qApp->applicationDirPath()+QDir::separator()+tmp_localpath + QDir::separator() ;
     }else{
@@ -160,13 +161,17 @@ void MainWindow::onAdd(bool checked)
         QString remotefile="";
 
         if (mode == FtpClient::FtpMode::Download){
-            localfile = org_localpath + org_localfile +"_"+QString::number(i+id);
+            localfile = org_localpath + org_remotefile +"_"+QString::number(i+id);
         }else{
             // upload local file
-            localfile = org_localpath + org_localfile;
+            if(QDir::isAbsolutePath(f.path())){
+                localfile = org_localfilepath;
+            }else{
+                localfile = org_localpath + org_localfile;
+            }
         }
         if (mode == FtpClient::FtpMode::Upload){
-            remotefile = QString("ftp://%1/%2/%3%4").arg(server, remotepath, org_remotefile, "_"+QString::number(i+id));
+            remotefile = QString("ftp://%1/%2/%3%4").arg(server, remotepath, org_localfile, "_"+QString::number(i+id));
         }else{
             remotefile = QString("ftp://%1/%2").arg(server, org_remotefile);
         }
@@ -199,6 +204,26 @@ void MainWindow::onSelectLocalPath(bool checked)
     if (!folder.isEmpty()) {
         ui->ftpLocalPath->setText(folder);
     }
+}
+
+void MainWindow::onAddLocal(bool checked)
+{
+    Q_UNUSED(checked)
+    if (oldfilepath.isEmpty()){
+        oldfilepath = apppath;
+    }
+    QString filename = QFileDialog::getOpenFileName(this, "Select a file for upload", oldfilepath);
+    if (!filename.isEmpty()){
+        ui->ftpLocalfile->setText(filename);
+        QFileInfo f(filename);
+        oldfilepath = f.absolutePath();
+    }
+}
+
+void MainWindow::onAddRemote(bool checked)
+{
+    Q_UNUSED(checked)
+
 }
 
 void MainWindow::onStart(bool checked)

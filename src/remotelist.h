@@ -20,12 +20,13 @@ public:
     void list(QUrl url=QUrl(""), QString username="", QString passwd="", int port=21);
     static size_t writecallback(char *data, size_t size);
     void clear();
+    QString getRemoteFileName();
+    // TODO: step in/out folders
 signals:
     void errormsg(QString msg);
-    // void datalist(QString data);
 private slots:
     void onTransferDone();
-    // void onDatalist(QString data);
+
 protected:
     void changeEvent(QEvent *e);
 

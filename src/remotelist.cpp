@@ -62,11 +62,8 @@ void RemoteList::list(QUrl url, QString username, QString passwd, int port)
 
 size_t RemoteList::writecallback(char *data, size_t size)
 {
-    qDebug() << "writecallback:" << data << " size:" << size;
-    // ui->textEdit->append(QString(data));
-    // emit datalist(QString(data));
+    // qDebug() << "writecallback:" << data << " size:" << size;
     QString tmp(data);
-    //
     QStringList  ds = tmp.split("\n");
     foreach(QString d, ds){
         QStringList ls = d.split(" ");
@@ -82,8 +79,6 @@ size_t RemoteList::writecallback(char *data, size_t size)
             }
         }
     }
-
-    // m_datas.append(QString(data));
     return size;
 }
 
@@ -91,7 +86,22 @@ void RemoteList::clear()
 {
     m_dirdatas.clear();
     m_datas.clear();
+    ui->tableWidget->clearContents();
+}
 
+QString RemoteList::getRemoteFileName()
+{
+    QList<QTableWidgetItem*> ds = ui->tableWidget->selectedItems();
+    if (ds.count()>1){
+        if (ds.first()->text().startsWith("-")){
+            //TODO: also get the url path
+            return ds.last()->text();
+        }
+    }
+    // foreach(auto d, ds){
+    //     qDebug() << "getRemoteFileName:" << d->text();
+    // }
+    return "";
 }
 
 void RemoteList::onTransferDone()
@@ -124,7 +134,3 @@ void RemoteList::onTransferDone()
     }
 }
 
-// void RemoteList::onDatalist(QString data)
-// {
-//     // ui->textEdit->append(data);
-// }

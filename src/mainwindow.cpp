@@ -229,7 +229,14 @@ void MainWindow::onAddRemote(bool checked)
     QString password = ui->ftpPassword->text();
     int port = ui->ftpPort->value();
     m_remotelist= new RemoteList(url, username, password, port, this);
-    m_remotelist->show();
+    int rc = m_remotelist->exec();
+    if (rc == QDialog::Accepted){
+        QString rfilename = m_remotelist->getRemoteFileName();
+        if (!rfilename.isEmpty()){
+            ui->ftpRemotefile->setText(rfilename);
+        }
+    }
+
 }
 
 void MainWindow::onStart(bool checked)

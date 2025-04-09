@@ -15,6 +15,12 @@ class RemoteList : public QDialog
     Q_OBJECT
 
 public:
+    enum cols{
+        TPY,
+        NAME
+    };
+    Q_ENUM(cols)
+
     explicit RemoteList(QUrl url, QString username, QString passwd, int port=21, QWidget *parent = nullptr);
     ~RemoteList();
     void list(QUrl url=QUrl(""), QString username="", QString passwd="", int port=21);
@@ -26,6 +32,8 @@ signals:
     void errormsg(QString msg);
 private slots:
     void onTransferDone();
+    void onTransferAborted();
+    void onErrormsg(QString msg);
 
 protected:
     void changeEvent(QEvent *e);
@@ -39,6 +47,7 @@ private:
     CurlEasy *transfer;
     static QList<QList<QString>> m_dirdatas;
     static QList<QList<QString>> m_datas;
+
 };
 
 

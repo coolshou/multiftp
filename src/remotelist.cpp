@@ -12,9 +12,11 @@ RemoteList::RemoteList(QUrl url, QString username, QString passwd, int port,
     m_url(url), m_username(username), m_password(passwd), m_port(port)
 {
     ui->setupUi(this);
-    // connect(this, &RemoteList::datalist, this, &RemoteList::onDatalist);
+    ui->lbErrormsg->setVisible(false);
+    connect(this, &RemoteList::errormsg, this, &RemoteList::onErrormsg);
     transfer = new CurlEasy(this);
     connect(transfer, &CurlEasy::done, this, &RemoteList::onTransferDone);
+    connect(transfer, &CurlEasy::aborted, this, &RemoteList::onTransferAborted);
     transfer->setWriteFunction(this->writecallback);
     list();
 }
@@ -107,27 +109,42 @@ void RemoteList::onTransferDone()
     if (transfer->result() != CURLE_OK) {
         QString msg = QString(" Transfer failed with curl error '%1'")
                           .arg(curl_easy_strerror(transfer->result()));
-        emit errormsg( getDateTimeNow() + msg);
+        qDebug() << "onTransferDone: " << msg;
+        emit errormsg(getDateTimeNow() + msg);
     }else{
         qDebug() << "perform list down";
         ui->tableWidget->setRowCount(m_dirdatas.count()+m_datas.count());
         int row=0;
         foreach (const QList<QString> &map, m_dirdatas){
-
             QTableWidgetItem *newItem = new QTableWidgetItem(map.first());
-            ui->tableWidget->setItem(row, 0, newItem);
+            ui->tableWidget->setItem(row, RemoteList::TPY, newItem);
             QTableWidgetItem *newItem1 = new QTableWidgetItem(map.last());
-            ui->tableWidget->setItem(row, 1, newItem1);
+            ui->tableWidget->setItem(row, RemoteList::NAME, newItem1);
             row++;
         }
         foreach (const QList<QString> &map, m_datas){
-
             QTableWidgetItem *newItem = new QTableWidgetItem(map.first());
-            ui->tableWidget->setItem(row, 0, newItem);
+            ui->tableWidget->setItem(row, RemoteList::TPY, newItem);
             QTableWidgetItem *newItem1 = new QTableWidgetItem(map.last());
-            ui->tableWidget->setItem(row, 1, newItem1);
+            ui->tableWidget->setItem(row, RemoteList::NAME, newItem1);
             row++;
         }
     }
+}
+
+void RemoteList::onTransferAborted()
+{
+    QString msg = getDateTimeNow() + " Transfer aborted.";
+    if (transfer->result() != CURLE_OK) {
+        msg = msg +"("+ curl_easy_strerror(transfer->result())+")";
+    }
+    qDebug() << "onTransferAborted: " << msg;
+}
+
+void RemoteList::onErrormsg(QString msg)
+{
+    ui->lbErrormsg->setText(msg);
+    ui->lbErrormsg->setVisible(true);
+    ui->tableWidget->setVisible(false);
 }
 

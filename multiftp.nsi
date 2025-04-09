@@ -11,7 +11,9 @@
 !ifndef APPFileVersion
 !define APPFileVersion 1.0.11404.09
 !endif
-
+!ifndef WIN64
+!define WIN64 ; force  64 bit, comment out for 32 bit
+!endif
 !define PRODUCT_REG_KEY "Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
 
 ; Main Install settings

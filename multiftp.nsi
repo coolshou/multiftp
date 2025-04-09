@@ -15,7 +15,7 @@
 Name "${APPNAMEANDVERSION}"
 InstallDir "$PROGRAMFILES\MultiFtp"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "C:\Program Files (x86)\Venis\MultiFtp-setup-$APPVERSION.exe"
+OutFile "..\MultiFtp-setup-$APPVERSION.exe"
 
 !include "FileFunc.nsh"
 ; Use compression

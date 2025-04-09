@@ -1,11 +1,12 @@
 ; Script generated with the Venis Install Wizard
+!addplugindir "nsis\"
 
 ; Define your application name
-!define APPNAME "MultiFtp"
+!define APPNAME "multiftp"
 !ifndef APPVERSION
 !define APPVERSION "1.0"
 !endif
-!define APPNAMEANDVERSION "MultiFtp $APPVERSION"
+!define APPNAMEANDVERSION "${APPNAME} $APPVERSION"
 !define APPDOMAIN "coolshou.idv.tw"
 !ifndef APPFileVersion
 !define APPFileVersion 1.0.11404.09
@@ -13,9 +14,9 @@
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"
-InstallDir "$PROGRAMFILES\MultiFtp"
+InstallDir "$PROGRAMFILES\${APPNAME}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "..\MultiFtp-setup-$APPVERSION.exe"
+OutFile "..\${APPNAME}-setup-$APPVERSION.exe"
 
 !include "FileFunc.nsh"
 ; Use compression
@@ -222,7 +223,7 @@ FunctionEnd
 
 !macro kill_process un
 Function ${un}kill_process
-    #kill qiperfd
+    #kill multiftp
     ${nsProcess::FindProcess} "${APPNAME}" $R0
     ${If} $R0 == 0
         DetailPrint "${APPNAME} is running. Closing it down"
@@ -237,4 +238,11 @@ FunctionEnd
 !macroend
 !insertmacro kill_process ""
 !insertmacro kill_process "un."
+
+Function .oninstsuccess
+    # final install success, run qiperftray
+    SetOutPath "$INSTDIR\"
+    Exec "$INSTDIR\${APPNAME}"
+FunctionEnd
+
 ; eof

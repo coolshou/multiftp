@@ -62,6 +62,8 @@ void RemoteList::list(QUrl url, QString username, QString passwd, int port)
 
 size_t RemoteList::writecallback(char *data, size_t size)
 {
+    // test with filezilla server v1.10.1
+    // collect dirs & files of current url
     QString tmp(data);
     QStringList  ds = tmp.split("\n");
     foreach(QString d, ds){

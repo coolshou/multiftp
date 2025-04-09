@@ -36,11 +36,15 @@ HEADERS += \
     src/ftpmanager.h \
     src/ftpmodel.h \
     src/mainwindow.h \
-    src/remotelist.h
+    src/remotelist.h \
+    src/versions.h
 
 FORMS += \
     src/mainwindow.ui \
     src/remotelist.ui
+
+OTHERS += \
+    multiftp.nsi
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

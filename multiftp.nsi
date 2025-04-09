@@ -2,7 +2,9 @@
 
 ; Define your application name
 !define APPNAME "MultiFtp"
+!ifndef APPVERSION
 !define APPVERSION "1.0"
+!endif
 !define APPNAMEANDVERSION "MultiFtp $APPVERSION"
 !define APPDOMAIN "coolshou.idv.tw"
 !ifndef APPFileVersion

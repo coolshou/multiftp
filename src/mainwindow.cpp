@@ -9,6 +9,7 @@
 #include <QStandardPaths>
 
 #include "ftpclient.h"
+#include "versions.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -91,7 +92,7 @@ void MainWindow::onShowAbout(bool checked)
 {
     Q_UNUSED(checked)
     //TODO: show about
-    QString msg = QString("%1\n use curl 8.13 do ftp upload/download").arg(APP_NAME);
+    QString msg = QString("%1 %2\n use curl 8.13 do ftp upload/download").arg(APP_NAME, MULTIFTPFILE_VERSION);
     QMessageBox::information(this, tr("About"), msg, QMessageBox::Ok);
 }
 

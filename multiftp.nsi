@@ -35,6 +35,8 @@ SetCompressor LZMA
 
 !define MUI_ABORTWARNING
 !define MUI_ICON "images\${APPNAME}.ico"
+# uninstall icon
+!define MUI_UNICON "images\uninstall.ico"
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
@@ -126,6 +128,10 @@ Section -FinishSection
 	WriteRegDWORD HKLM "Software\${PRODUCT_REG_KEY}" "NoRepair" "1"
 	WriteRegStr HKLM "Software\${PRODUCT_REG_KEY}" "UninstallString" "$INSTDIR\uninstall.exe"
 	WriteUninstaller "$INSTDIR\uninstall.exe"
+	# size
+	${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+	IntFmt $0 "0x%08X" $0
+	WriteRegDWORD HKLM "Software\${PRODUCT_REG_KEY}" "EstimatedSize" "$0"
 
 SectionEnd
 

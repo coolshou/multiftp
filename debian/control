@@ -1,0 +1,20 @@
+Source: multiftp
+Section: network
+Priority: optional
+Maintainer: coolshou <coolshou2060@gmail.com>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13), qt6-base-dev, qmake6, libcurl4-gnutls-dev
+Standards-Version: 4.6.2
+Homepage: https://github.com/coolshou/multiftp.git
+#Vcs-Browser: https://salsa.debian.org/debian/multiftp
+#Vcs-Git: https://salsa.debian.org/debian/multiftp.git
+
+Package: multiftp
+Architecture: any
+Multi-Arch: foreign
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+Description: multiftp base on curl do ftp upload/download test
+ a simple tool base on curl do ftp upload/download test

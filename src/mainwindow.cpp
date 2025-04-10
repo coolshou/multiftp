@@ -50,14 +50,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_dirdelegate= new DirDelegate(ui->tableView);
     ui->tableView->setItemDelegateForColumn(1, m_dirdelegate);
     // ui->tableView->horizontalHeader()->show();
-
     // decompress 500M.qz
 #if defined(Q_OS_LINUX)
-// TODO: under linux the /opt/multiftp/bin/500M.qz can not be read!!
-    qDebug() << "copy 500M.qz to " << tmppath << "500M.qz";
+    // under linux the /opt/multiftp/bin/500M.qz can not be read!!
     QFile::copy(":/500M", tmppath+"500M.qz");
     decompressFile(tmppath+"500M.qz", tmppath+"500M");
-
 #elif defined(Q_OS_WIN32)
     QString srcfile = apppath+QDir::separator()+"500M.qz";
     QString destfile = apppath+QDir::separator()+"500M";

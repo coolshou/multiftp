@@ -6,6 +6,7 @@
 #include <QString>
 #include <QFile>
 #include <QTimer>
+#include <QTime>
 #include <QDateTime>
 #include "CurlEasy.h"
 
@@ -32,6 +33,7 @@ signals:
     void downloadFinished(int id);
     void uploadFinished(int id);
     void progress(int id, qint64 bytesCurrent, qint64 bytesTotal, int percentage);
+    void throughput(int id, double value);
     void stop(int id);
     void errormsg(int id, QString msg);
 
@@ -65,6 +67,10 @@ private:
     int m_errorcode; // error code
     QString m_error; // error message
     bool m_stop;
+    QDateTime starttime;
+    QTime oldTime;
+    qint64 oldsize;
+    void calcThroughput(qint64 currentsize);
 };
 
 #endif // FTPCLIENT_H

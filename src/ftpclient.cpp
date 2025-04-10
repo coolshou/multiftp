@@ -26,7 +26,7 @@ FtpClient::FtpClient(int id, const QString &server, const QString &username,
     transfer = new CurlEasy(this);
     connect(transfer, &CurlEasy::done, this, &FtpClient::onTransferDone);
     connect(transfer, &CurlEasy::aborted, this, &FtpClient::onTransferAborted);
-    // connect(transfer, &CurlEasy::progress, this, &FtpClient::onTransferProgress);
+    // connect(transfer, &CurlEasy::progress, this, &FtpClient::onTransferProgress); // not work on setWriteFunction and setReadFunction
     // m_timer = QTimer(this);
     m_timer.setInterval(3000);//3sec
 }
@@ -46,6 +46,19 @@ void FtpClient::connectToFtp(const QString &server, const QString &username, con
     Q_UNUSED(server)
     Q_UNUSED(username)
     Q_UNUSED(password)
+}
+
+void FtpClient::calcThroughput(qint64 currentsize)
+{
+    qint64 diffsize = currentsize - oldsize;
+    QTime endTime = QTime::currentTime();
+    int elapsed = oldTime.secsTo(endTime);
+    if (elapsed){
+        double tp = ((diffsize/elapsed)); //byte/s //=> Mbps
+        if (tp){
+            // emit throughput(m_id, tp);
+        }
+    }
 }
 
 void FtpClient::downloadFile(const QString &remoteFile, const QString &localFile) {
@@ -69,13 +82,18 @@ void FtpClient::downloadFile(const QString &remoteFile, const QString &localFile
 
     QUrl ftpUrl(url);
     // Set a simple file writing function
+    oldTime = QTime::currentTime();
     m_current_downloadsize = 0;
+    oldsize = m_current_downloadsize;
     transfer->setWriteFunction([this](char *data, size_t size)->size_t {
         qint64 bytesWritten = m_downloadFile->write(data, static_cast<qint64>(size));
         if (bytesWritten ==-1){
             qDebug() << "write to m_downloadFile Fail";
         }
         m_current_downloadsize = m_downloadFile->size();
+        calcThroughput(m_current_downloadsize);
+        oldsize = m_current_downloadsize;
+
         if ((m_downloadsize>0)&&(m_current_downloadsize>0)){
             int p = static_cast<int>((static_cast<double>(m_current_downloadsize) / m_downloadsize) * 100);
             // qDebug() << "write " << m_current_downloadsize << " / " << m_downloadsize << " - " << p << " %";
@@ -92,7 +110,7 @@ void FtpClient::downloadFile(const QString &remoteFile, const QString &localFile
         if (msg.contains("213")){
             QStringList ls = msg.split(" ");
             if (ls.size()==2){
-                qDebug() << "File size:" << ls[1];
+                // qDebug() << "File size:" << ls[1];
                 bool ok;
                 m_downloadsize = ls[1].toLongLong(&ok);
                 if (!ok){
@@ -111,6 +129,7 @@ void FtpClient::downloadFile(const QString &remoteFile, const QString &localFile
     transfer->set(CURLOPT_FOLLOWLOCATION, long(1)); // Follow redirects
     transfer->set(CURLOPT_FAILONERROR, long(1)); // Do not return CURL_OK in case valid server responses reporting errors.
     log("downloadFile started.");
+    starttime = QDateTime::currentDateTime();
     transfer->perform();
 }
 
@@ -125,8 +144,10 @@ void FtpClient::uploadFile(const QString &localFile, const QString &remoteFile) 
     QUrl ftpUrl(url);
 
     // Set a simple file reading function
+    oldTime = QTime::currentTime();
     m_uploadsize = m_uploadFile->size();
     m_current_uploadsize=0;
+    oldsize = m_current_uploadsize;
     emit progress(m_id, m_current_uploadsize , m_uploadsize, 0);
     transfer->setReadFunction([this](char *data, size_t size) -> size_t {
         qint64 bytesRead = m_uploadFile->read(data, size);
@@ -136,6 +157,8 @@ void FtpClient::uploadFile(const QString &localFile, const QString &remoteFile) 
         }
         //Return the number of bytes actually read
         m_current_uploadsize = m_current_uploadsize + bytesRead;
+        calcThroughput(m_current_uploadsize);
+        oldsize = m_current_uploadsize;
         if ((m_current_uploadsize>0)&&(m_uploadsize>0)){
             int p = static_cast<int>((static_cast<double>(m_current_uploadsize) / m_uploadsize) * 100);
             // qDebug() << "read " << m_current_uploadsize << " / " << m_uploadsize << " - " << p << " %";
@@ -182,17 +205,15 @@ void FtpClient::onTransferProgress(qint64 downloadTotal, qint64 downloadNow, qin
     if (m_ftpmode==FtpClient::FtpMode::Download){
         if (downloadTotal > 0) {
             //calc progress
-            p = static_cast<int>((static_cast<double>(downloadNow) / downloadTotal)*100);
-            // qDebug() << m_id << " Download p: " << QString::number(p);
-            emit progress(m_id, downloadNow , downloadTotal, p);
-        } else {
-            // ui->progressBar->setValue(0);
+            // p = static_cast<int>((static_cast<double>(downloadNow) / downloadTotal)*100);
+            qDebug() << m_id << " Download now: " << QString::number(downloadNow);
+            // emit progress(m_id, downloadNow , downloadTotal, p);
         }
     }else{
         if (uploadTotal >0){
-            p = static_cast<int>((static_cast<double>(uploadNow) / uploadTotal)*100);
-            // qDebug() << m_id << " Upload p: " << p;
-            emit progress(m_id, uploadNow, uploadTotal, p);
+            // p = static_cast<int>((static_cast<double>(uploadNow) / uploadTotal)*100);
+            qDebug() << m_id << " Upload now: " << QString::number(uploadNow);;
+            // emit progress(m_id, uploadNow, uploadTotal, p);
         }
     }
 }
@@ -224,10 +245,13 @@ void FtpClient::onTransferDone()
         }else{
             tsize = m_uploadFile->size();
         }
-        QString msg = QString(" Transfer complete. %1 bytes Transfered.").arg(tsize);
+        QDateTime endtime =QDateTime::currentDateTime();
+        int est = starttime.secsTo(endtime);
+        // qDebug() << " start: " << starttime << " to: " << endtime << " time use: " << est;
+        QString msg = QString(" Transfer complete. %1 bytes Transfered.(Time use: %2 sec)").arg(tsize).arg(est);
         log(msg);
         emit errormsg(m_id, getDateTimeNow()+msg);
-
+        //prepare arrange another test
         if (m_ftpmode == FtpMode::Download){
             delete m_downloadFile;
             m_downloadFile = nullptr;

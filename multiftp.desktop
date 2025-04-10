@@ -1,0 +1,14 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Type=Application
+Exec=/opt/multiftp/bin/multiftp
+Name=multiftp
+GenericName=multiftp
+Comment=Tool to do ftp test
+Icon=multiftp
+Terminal=false
+Categories=Network;Qt;
+StartupNotify=true
+StartupWMClass=multiftp
+

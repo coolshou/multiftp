@@ -30,7 +30,13 @@ void FtpOption::loadcfg()
     ui->ftpPort->setValue(m_cfg->value("ftpPort", 21).toInt());
     ui->ftpUsername->setText(m_cfg->value("ftpUsername", "1").toString());
     ui->ftpPassword->setText(m_cfg->value("ftpPassword", "1").toString());
-    ui->ftpLocalfile->setText(m_cfg->value("ftpLocalfile", "500M").toString());
+    QString lfile;
+#if defined(Q_OS_LINUX)
+    lfile = tmppath+"500M";
+#else
+    lfile = "500M";
+#endif
+    ui->ftpLocalfile->setText(m_cfg->value("ftpLocalfile", lfile).toString());
     ui->ftpRemotefile->setText(m_cfg->value("ftpRemotefile", "500M").toString());
     QString localpath = tmppath+"tmp";
     ui->ftpLocalPath->setText(m_cfg->value("ftpLocalPath", QDir::toNativeSeparators(localpath)).toString());

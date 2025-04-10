@@ -59,11 +59,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     src/multiftp.qrc
 
-unix:!android {
-    RESOURCES += \
-        data.qrc \
-}
-
 win32 {
     # windows resources
     #    CONFIG += embed_manifest_exe
@@ -118,10 +113,10 @@ unix:!android {
     IMAGES.path += \
         "/usr/share/pixmaps/"
 
-    DATAFILES.files += \
-        500M.qz
-    DATAFILES.path += \
-        "/opt/multiftp/bin/"
+    # DATAFILES.files += \
+    #     500M.qz
+    # DATAFILES.path += \
+    #     "/opt/multiftp/bin/"
 
-    INSTALLS += MIME ICONS DESKTOP IMAGES DATAFILES
+    INSTALLS += ICONS DESKTOP IMAGES #DATAFILES
 }

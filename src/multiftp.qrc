@@ -3,5 +3,6 @@
         <file alias="upload">../images/upload.png</file>
         <file alias="download">../images/download.png</file>
         <file alias="multiftp">../images/multiftp.png</file>
+        <file alias="500M">../500M.qz</file>
     </qresource>
 </RCC>

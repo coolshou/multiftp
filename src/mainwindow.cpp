@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    QString tmppath = QStandardPaths::writableLocation(QStandardPaths::TempLocation)+
+              QDir::separator();
     apppath = qApp->applicationDirPath();
     cfg = new QSettings(QSettings::IniFormat, QSettings::UserScope,
                         APP_ORG, APP_NAME);
@@ -50,10 +52,17 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->tableView->horizontalHeader()->show();
 
     // decompress 500M.qz
+#if defined(Q_OS_LINUX)
+// TODO: under linux the /opt/multiftp/bin/500M.qz can not be read!!
+    qDebug() << "copy 500M.qz to " << tmppath << "500M.qz";
+    QFile::copy(":/500M", tmppath+"500M.qz");
+    decompressFile(tmppath+"500M.qz", tmppath+"500M");
+
+#elif defined(Q_OS_WIN32)
     QString srcfile = apppath+QDir::separator()+"500M.qz";
     QString destfile = apppath+QDir::separator()+"500M";
     decompressFile(srcfile, destfile);
-
+#endif
 }
 
 MainWindow::~MainWindow()

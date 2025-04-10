@@ -2,6 +2,8 @@
 #include "ui_remotelist.h"
 
 #include "comm.h"
+#include <QDebug>
+
 // Define the static member variable
 QList<QList<QString>> RemoteList::m_datas;
 QList<QList<QString>> RemoteList::m_dirdatas;

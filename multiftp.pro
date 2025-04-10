@@ -59,6 +59,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     src/multiftp.qrc
 
+unix:!android {
+    RESOURCES += \
+        data.qrc \
+}
+
 win32 {
     # windows resources
     #    CONFIG += embed_manifest_exe
@@ -96,4 +101,27 @@ win32 {
     DISTFILES += $$PWD/images/multiftp.icon
     # nmake install
     INSTALLS += DATAFILES
+}
+unix:!android {
+    ICONS.files += \
+        images/multiftp.png
+    ICONS.path += \
+        "/usr/share/icons/"
+
+    DESKTOP.files += \
+        multiftp.desktop
+    DESKTOP.path += \
+        "/usr/share/applications/"
+
+    IMAGES.files += \
+        images/multiftp.png
+    IMAGES.path += \
+        "/usr/share/pixmaps/"
+
+    DATAFILES.files += \
+        500M.qz
+    DATAFILES.path += \
+        "/opt/multiftp/bin/"
+
+    INSTALLS += MIME ICONS DESKTOP IMAGES DATAFILES
 }

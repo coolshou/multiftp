@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="500M">500M.qz</file>
+    </qresource>
+</RCC>

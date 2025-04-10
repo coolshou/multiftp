@@ -25,6 +25,7 @@ SOURCES += \
     src/ftpclient.cpp \
     src/ftpmanager.cpp \
     src/ftpmodel.cpp \
+    src/ftpoption.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
     src/remotelist.cpp
@@ -35,16 +36,20 @@ HEADERS += \
     src/ftpclient.h \
     src/ftpmanager.h \
     src/ftpmodel.h \
+    src/ftpoption.h \
     src/mainwindow.h \
     src/remotelist.h \
     src/versions.h
 
 FORMS += \
+    src/ftpoption.ui \
     src/mainwindow.ui \
     src/remotelist.ui
 
 OTHERS += \
-    multiftp.nsi
+    multiftp.nsi \
+    build_setup.bat \
+    build_x64.bat
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

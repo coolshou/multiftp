@@ -6,6 +6,7 @@
 
 #include "ftpmanager.h"
 #include "ftpmodel.h"
+#include "ftpoption.h"
 #include "dirdelegate.h"
 #include "remotelist.h"
 #include "comm.h"
@@ -32,9 +33,6 @@ private slots:
     void onQuit(bool checked);
     void onAdd(bool checked);
     void onClear(bool checked);
-    void onSelectLocalPath(bool checked);
-    void onAddLocal(bool checked);
-    void onAddRemote(bool checked);
     void onStart(bool checked);
     void onStop(bool checked);
     void setRunStatus(bool start);
@@ -45,11 +43,10 @@ private:
     Ui::MainWindow *ui;
     FtpManager *m_ftpmanager;
     FtpModel *m_ftpmodel;
+    FtpOption *m_ftpoption;
     DirDelegate *m_dirdelegate;
     QString apppath;
     QSettings *cfg;
-    QString tmppath;
-    QString oldfilepath;
     RemoteList *m_remotelist;
 };
 #endif // MAINWINDOW_H

@@ -9,7 +9,7 @@ FtpManager::~FtpManager()
     clear();
 }
 
-void FtpManager::addFtpClient(int id, const QString &server, int port,
+void FtpManager::onAddFtpClient(int id, const QString &server, int port,
                               const QString &username, const QString &password,
                               QString localfile, QString remotefile, FtpClient::FtpMode mode,
                               int loop) {
@@ -23,6 +23,7 @@ void FtpManager::addFtpClient(int id, const QString &server, int port,
     connect(client, &FtpClient::downloadFinished, this, &FtpManager::onDownloadFinished);
     connect(client, &FtpClient::uploadFinished, this, &FtpManager::onUploadFinished);
     connect(client, &FtpClient::progress, this, &FtpManager::onProgress);
+    connect(client, &FtpClient::throughput, this, &FtpManager::onThroughput);
     // connect(client, &FtpClient::stop, thread, &QThread::quit);
     connect(client, &FtpClient::stop, this, &FtpManager::onStop);
     connect(client, &FtpClient::errormsg, this, &FtpManager::onErrorMsg);
@@ -85,6 +86,11 @@ void FtpManager::onUploadFinished(int id)
 void FtpManager::onProgress(int id, qint64 bytesCurrent, qint64 bytesTotal, int percentage)
 {
     emit progress(id, bytesCurrent, bytesTotal, percentage);
+}
+
+void FtpManager::onThroughput(int id, double value)
+{
+    emit throughput(id, value);
 }
 
 void FtpManager::onErrorMsg(int id, QString msg)

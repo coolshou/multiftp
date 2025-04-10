@@ -215,6 +215,8 @@ Function .onInit
       strcpy $INSTDIR "$PROGRAMFILES64\${APPNAME}"
     !endif
 
+	call kill_process
+
 FunctionEnd
 
 Function install_vc_redist

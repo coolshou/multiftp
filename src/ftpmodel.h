@@ -15,6 +15,7 @@ public:
         RemoteFile,
         Progress,
         Percentage,
+        Throughput,
         Comment
     };
     explicit FtpModel(QObject *parent = nullptr);
@@ -50,14 +51,16 @@ public:
     // Add data:
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     bool insertColumns(int column, int count, const QModelIndex &parent = QModelIndex()) override;
-    void addData(const QVector<QVariant> &newRow);
     // Remove data:
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
     bool removeColumns(int column, int count, const QModelIndex &parent = QModelIndex()) override;
-
     void clear();
+
 public slots:
+    void addData(const QVector<QVariant> &newRow);
+
     void updateProgress(int id, qint64 bytesCurrent, qint64 bytesTotal, int percentage);
+    void updateThroughput(int id, double value);
     void updateComment(int id, QString msg);
 
 private:

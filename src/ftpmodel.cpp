@@ -4,7 +4,7 @@ FtpModel::FtpModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
     // Initialize column headers
-    m_columnHeaders = {"Local File", "DIR", "Remote File", "Progress", "%", "comment"};
+    m_columnHeaders = {"Local File", "DIR", "Remote File", "Progress", "%", "TP", "comment"};
 }
 
 QVariant FtpModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -187,6 +187,11 @@ void FtpModel::updateProgress(int id, qint64 bytesCurrent, qint64 bytesTotal, in
 {
     setData(id, Col::Progress, QVariant(QString("%1/%2").arg(QString::number(bytesCurrent), QString::number(bytesTotal))));
     setData(id, Col::Percentage, QVariant(percentage));
+}
+
+void FtpModel::updateThroughput(int id, double value)
+{
+    setData(id, Col::Throughput, QVariant(value));
 }
 
 void FtpModel::updateComment(int id, QString msg)

@@ -263,14 +263,14 @@ FunctionEnd
 !macro kill_process un
 Function ${un}kill_process
     #kill multiftp
-    ${nsProcess::FindProcess} "${APPNAME}" $R0
+    ${nsProcess::FindProcess} "${APPNAME}.exe" $R0
     ${If} $R0 == 0
-        DetailPrint "${APPNAME} is running. Closing it down"
-        ${nsProcess::KillProcess} "${APPNAME}" $R0
+        DetailPrint "${APPNAME}.exe is running. Closing it down"
+        ${nsProcess::KillProcess} "${APPNAME}.exe" $R0
         ;DetailPrint "Waiting for ${APPNAME} to close"
         ;Sleep 2000
     ${Else}
-        DetailPrint "${APPNAME} was not found to be running"
+        DetailPrint "${APPNAME}.exe was not found to be running"
     ${EndIf}
     ${nsProcess::Unload}
 FunctionEnd

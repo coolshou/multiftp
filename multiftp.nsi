@@ -65,6 +65,7 @@ Section "MultiFtp" Section1
 
 	; Set Section Files and Shortcuts
 	SetOutPath "$INSTDIR\"
+      File "images\${APPNAME}.ico"
 	File "multiftp_x86_64\500M.qz"
 	File "multiftp_x86_64\Qt6Core.dll"
 	File "multiftp_x86_64\Qt6Gui.dll"
@@ -152,7 +153,7 @@ Section Uninstall
 
 	; Delete self
 	Delete "$INSTDIR\uninstall.exe"
-
+	Delete "$INSTDIR\${APPNAME}.ico"
 	; Delete Shortcuts
 	Delete "$DESKTOP\MultiFtp.lnk"
 	Delete "$SMPROGRAMS\MultiFtp\MultiFtp.lnk"
